@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminSignup from "./components/AdminSignup";
 import MyTable from "./pages/MyTable";
 import HotelDetails from "./pages/HotelDetails";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -14,9 +15,6 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
-        <div style={{backgroundColor: 'red', color: 'white', padding: '10px', textAlign: 'center'}}>
-          TEST - App is rendering!
-        </div>
         <Navbar />
         <main className="flex-grow">
           <Routes>
@@ -25,6 +23,7 @@ function App() {
             <Route path="/services" element={<Services />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/admin-signup" element={<AdminSignup />} />
             <Route path="/mytable" element={<MyTable />} />
             <Route path="/hotel/:id" element={<HotelDetails />} />
             <Route path="/admin" element={<AdminDashboard />} />

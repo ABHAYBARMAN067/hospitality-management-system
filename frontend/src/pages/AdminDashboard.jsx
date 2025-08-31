@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
+
   const bookings = [
     { id: 1, user: "John Doe", hotel: "The Taj", status: "Confirmed" },
     { id: 2, user: "Jane Smith", hotel: "Oberoi", status: "Pending" },
@@ -9,6 +24,7 @@ const AdminDashboard = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+      <p className="text-gray-600 mb-6">Welcome, {user.name || user.email}!</p>
 
       <h2 className="text-xl font-semibold mb-2">Manage Bookings</h2>
       <div className="space-y-4">
