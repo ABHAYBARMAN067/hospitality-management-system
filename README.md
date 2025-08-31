@@ -210,7 +210,7 @@ Auth: JWT (login/signup/session)
 
 
 ### =====================================================================================================================================================
-
+npm install react-router-dom
 
 1️⃣ Backend Setup & Run
 Step 1: Install dependencies
@@ -285,5 +285,3 @@ Run backend and frontend in separate terminals.
 
 .env must be properly configured for MongoDB & Cloudinary.
 
-#   A 3  
- 

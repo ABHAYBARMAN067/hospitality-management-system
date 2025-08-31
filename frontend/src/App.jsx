@@ -1,27 +1,38 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import HotelCard from "./components/HotelCard";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Services from "./pages/Services";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import MyTable from "./pages/MyTable";
+import HotelDetails from "./pages/HotelDetails";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
-    <>
-      <Navbar />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-        <HotelCard 
-          name="Taj Palace" 
-          location="Delhi" 
-          price="4500" 
-          image="https://source.unsplash.com/400x300/?hotel,room"
-        />
-        <HotelCard 
-          name="Oberoi Hotel" 
-          location="Mumbai" 
-          price="6000" 
-          image="https://source.unsplash.com/400x300/?resort,hotel"
-        />
+    <Router>
+      <div className="min-h-screen flex flex-col">
+        <div style={{backgroundColor: 'red', color: 'white', padding: '10px', textAlign: 'center'}}>
+          TEST - App is rendering!
+        </div>
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/mytable" element={<MyTable />} />
+            <Route path="/hotel/:id" element={<HotelDetails />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </main>
+        <Footer />
       </div>
-      <Footer />
-    </>
+    </Router>
   );
 }
 
