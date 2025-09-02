@@ -1,5 +1,7 @@
+// backend/src/models/User.js
 import mongoose from "mongoose";
 
+// User Schema
 const userSchema = new mongoose.Schema(
   {
     name: { 
@@ -34,7 +36,7 @@ const userSchema = new mongoose.Schema(
       default: true
     },
     profileImage: {
-      type: String // Cloudinary URL
+      type: String // Cloudinary URL for profile pic
     }
   },
   { 
@@ -51,7 +53,8 @@ userSchema.virtual('bookings', {
   foreignField: 'user'
 });
 
-// Index for better query performance
+// Index for role for faster admin queries
 userSchema.index({ role: 1 });
 
+// Export User model
 export default mongoose.model("User", userSchema);

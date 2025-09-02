@@ -1,42 +1,21 @@
 import Table from "../models/Table.js";
 
-// Get tables for a hotel
-export const getTables = async (req, res) => {
-  try {
-    const { available } = req.query;
-    let query = { hotel: req.params.hotelId };
-    
-    if (available === 'true') {
-      query.isAvailable = true;
-    }
-    
-    const tables = await Table.find(query).sort({ seats: 1 });
-    res.json(tables);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Create table (admin only)
+// Create table
 export const createTable = async (req, res) => {
   try {
-    const { hotel, name, seats } = req.body;
-    const table = await Table.create({ hotel, name, seats });
+    const { hotel, name, capacity, price } = req.body;
+    const table = await Table.create({ hotel, name, capacity, price });
     res.status(201).json(table);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Update table availability (admin only)
-export const updateTable = async (req, res) => {
+// Get tables by hotel
+export const getTablesByHotel = async (req, res) => {
   try {
-    const table = await Table.findById(req.params.id);
-    if (!table) return res.status(404).json({ message: "Table not found" });
-
-    table.isAvailable = req.body.isAvailable;
-    await table.save();
-    res.json(table);
+    const tables = await Table.find({ hotel: req.params.hotelId });
+    res.json(tables);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
