@@ -3,7 +3,14 @@ import Table from "../models/Table.js";
 // Get tables for a hotel
 export const getTables = async (req, res) => {
   try {
-    const tables = await Table.find({ hotel: req.params.hotelId });
+    const { available } = req.query;
+    let query = { hotel: req.params.hotelId };
+    
+    if (available === 'true') {
+      query.isAvailable = true;
+    }
+    
+    const tables = await Table.find(query).sort({ seats: 1 });
     res.json(tables);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signupUser } from '../utils/api';
 
 const AdminSignup = () => {
   const navigate = useNavigate();
@@ -112,16 +113,55 @@ const AdminSignup = () => {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically send the data to your backend
-      // For now, we'll simulate the submission
-      console.log('Admin Signup Data:', formData);
+      // First, create the admin user account
+      const adminData = {
+        name: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: 'admin'
+      };
+
+      const adminResponse = await signupUser(adminData);
+      const adminUser = adminResponse.data;
+
+      // Then create the hotel with images
+      const formDataToSend = new FormData();
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Add hotel details
+      formDataToSend.append('name', formData.hotelName);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('address', formData.address);
       
-      alert('Admin account created successfully! You can now login.');
+      // Add hotel image
+      if (formData.hotelPhoto) {
+        formDataToSend.append('hotelImage', formData.hotelPhoto);
+      }
+      
+      // Add dish details and images
+      formData.dishes.forEach((dish, index) => {
+        formDataToSend.append(`topDishes[${index}][name]`, dish.name);
+        if (dish.image) {
+          formDataToSend.append(`dishImage${index}`, dish.image);
+        }
+      });
+
+      // Create hotel (you'll need to add this API endpoint)
+      const hotelResponse = await fetch('http://localhost:5000/api/hotels', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${adminUser.token}`
+        },
+        body: formDataToSend
+      });
+
+      if (!hotelResponse.ok) {
+        throw new Error('Failed to create hotel');
+      }
+
+      alert('Admin account and hotel created successfully! You can now login.');
       navigate('/login');
     } catch (error) {
+      console.error('Error:', error);
       alert('Error creating admin account. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -161,6 +201,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.hotelName ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   />
                   {errors.hotelName && (
                     <p className="text-red-500 text-sm mt-1">{errors.hotelName}</p>
@@ -178,6 +219,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.city ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   >
                     <option value="">Select City</option>
                     {cities.map(city => (
@@ -203,6 +245,7 @@ const AdminSignup = () => {
                   className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                     errors.address ? 'border-red-500' : 'border-gray-300'
                   }`}
+                  disabled={isSubmitting}
                 />
                 {errors.address && (
                   <p className="text-red-500 text-sm mt-1">{errors.address}</p>
@@ -220,10 +263,13 @@ const AdminSignup = () => {
                     onChange={(e) => handleFileChange(e, 'hotelPhoto')}
                     className="hidden"
                     id="hotelPhoto"
+                    disabled={isSubmitting}
                   />
                   <label
                     htmlFor="hotelPhoto"
-                    className="cursor-pointer bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700"
+                    className={`cursor-pointer px-6 py-3 rounded-lg text-white ${
+                      isSubmitting ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700'
+                    }`}
                   >
                     Choose Photo
                   </label>
@@ -266,6 +312,7 @@ const AdminSignup = () => {
                           className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                             errors[`dish${index}Name`] ? 'border-red-500' : 'border-gray-300'
                           }`}
+                          disabled={isSubmitting}
                         />
                         {errors[`dish${index}Name`] && (
                           <p className="text-red-500 text-sm mt-1">{errors[`dish${index}Name`]}</p>
@@ -283,10 +330,13 @@ const AdminSignup = () => {
                             onChange={(e) => handleDishImageChange(index, e)}
                             className="hidden"
                             id={`dishImage${index}`}
+                            disabled={isSubmitting}
                           />
                           <label
                             htmlFor={`dishImage${index}`}
-                            className="cursor-pointer bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 text-sm"
+                            className={`cursor-pointer px-4 py-2 rounded-lg text-white text-sm ${
+                              isSubmitting ? 'bg-gray-400' : 'bg-gray-600 hover:bg-gray-700'
+                            }`}
                           >
                             Choose Image
                           </label>
@@ -326,6 +376,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.username ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   />
                   {errors.username && (
                     <p className="text-red-500 text-sm mt-1">{errors.username}</p>
@@ -345,6 +396,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -364,6 +416,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.password ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   />
                   {errors.password && (
                     <p className="text-red-500 text-sm mt-1">{errors.password}</p>
@@ -383,6 +436,7 @@ const AdminSignup = () => {
                     className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-200 ${
                       errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    disabled={isSubmitting}
                   />
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>

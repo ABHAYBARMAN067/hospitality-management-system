@@ -103,7 +103,8 @@ backend/src/
 │   ├── hotelRoutes.js                 # Hotel endpoints
 │   └── tableRoutes.js                 # Table endpoints
 └── utils/                             # Utility functions
-    └── generateToken.js               # JWT token generation
+    └── generateToken.js   
+└── .env                
 ```
 
 ### 📁 Configuration (`/backend/`)

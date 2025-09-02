@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { signupUser } from "../utils/api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const Signup = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -22,20 +24,18 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      // For now, we'll simulate a signup with mock data
-      // In a real app, you'd make an API call here
-      const userData = {
-        id: 1,
-        name: formData.name,
-        email: formData.email,
-      };
+      const response = await signupUser(formData);
+      const userData = response.data;
       
       signup(userData);
       navigate("/");
     } catch (error) {
-      setError("Signup failed. Please try again.");
+      setError(error.response?.data?.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,6 +59,7 @@ const Signup = () => {
             onChange={handleInputChange}
             className="w-full border p-2 rounded-lg"
             required
+            disabled={loading}
           />
           <input
             type="email"
@@ -68,6 +69,7 @@ const Signup = () => {
             onChange={handleInputChange}
             className="w-full border p-2 rounded-lg"
             required
+            disabled={loading}
           />
           <input
             type="password"
@@ -77,12 +79,14 @@ const Signup = () => {
             onChange={handleInputChange}
             className="w-full border p-2 rounded-lg"
             required
+            disabled={loading}
           />
           <button 
             type="submit"
-            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
+            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+            disabled={loading}
           >
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { loginUser } from "../utils/api";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,20 +23,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
-      // For now, we'll simulate a login with mock data
-      // In a real app, you'd make an API call here
-      const userData = {
-        id: 1,
-        name: "User",
-        email: formData.email,
-      };
+      const response = await loginUser(formData);
+      const userData = response.data;
       
       login(userData);
       navigate("/");
     } catch (error) {
-      setError("Login failed. Please try again.");
+      setError(error.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,6 +58,7 @@ const Login = () => {
             onChange={handleInputChange}
             className="w-full border p-2 rounded-lg"
             required
+            disabled={loading}
           />
           <input
             type="password"
@@ -67,12 +68,14 @@ const Login = () => {
             onChange={handleInputChange}
             className="w-full border p-2 rounded-lg"
             required
+            disabled={loading}
           />
           <button 
             type="submit"
-            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
+            className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

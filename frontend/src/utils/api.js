@@ -19,8 +19,23 @@ export const loginUser = (credentials) => API.post("/auth/login", credentials);
 export const signupUser = (data) => API.post("/auth/signup", data);
 
 // Hotel APIs
-export const getHotels = () => API.get("/hotels");
+export const getHotels = (city) => {
+  const params = city ? { city } : {};
+  return API.get("/hotels", { params });
+};
+export const getHotelsByCity = (city) => API.get(`/hotels/city/${city}`);
 export const getHotelById = (id) => API.get(`/hotels/${id}`);
+export const createHotel = (formData) => API.post("/hotels", formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+export const updateHotel = (id, formData) => API.put(`/hotels/${id}`, formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+export const deleteHotel = (id) => API.delete(`/hotels/${id}`);
 
 // Booking APIs
 export const createBooking = (bookingData) => API.post("/bookings", bookingData);

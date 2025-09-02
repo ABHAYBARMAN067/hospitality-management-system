@@ -1,15 +1,34 @@
 import Booking from "../models/Booking.js";
+import Table from "../models/Table.js";
 
 // Create booking
 export const createBooking = async (req, res) => {
   try {
-    const { hotel, table, date } = req.body;
+    const { hotel, table, date, time, numberOfGuests, specialRequests } = req.body;
+    
+    // Check if table is available
+    const tableExists = await Table.findById(table);
+    if (!tableExists) {
+      return res.status(404).json({ message: "Table not found" });
+    }
+    
+    if (!tableExists.isAvailable) {
+      return res.status(400).json({ message: "Table is not available" });
+    }
+    
     const booking = await Booking.create({
       user: req.user._id,
       hotel,
       table,
       date,
+      time,
+      numberOfGuests,
+      specialRequests,
     });
+    
+    // Populate the booking with related data
+    await booking.populate(['hotel', 'table']);
+    
     res.status(201).json(booking);
   } catch (error) {
     res.status(500).json({ message: error.message });
