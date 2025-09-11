@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { createBooking } from '../utils/api';
 
 const BookingConfirmation = ({ bookingDetails, onBack, onConfirm }) => {
   const { user, login, signup } = useContext(AuthContext);
@@ -44,12 +45,28 @@ const BookingConfirmation = ({ bookingDetails, onBack, onConfirm }) => {
     }
   };
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (!user) {
       setShowAuthForm(true);
       return;
     }
-    onConfirm(bookingDetails);
+    
+    try {
+      const bookingData = {
+        hotel: bookingDetails.hotelId,
+        table: bookingDetails._id || bookingDetails.id,
+        date: bookingDetails.date,
+        time: bookingDetails.time,
+        price: bookingDetails.price
+      };
+      
+      await createBooking(bookingData);
+      alert('Booking confirmed successfully! You can view it in MyTable section.');
+      onConfirm(bookingDetails);
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert('Failed to create booking. Please try again.');
+    }
   };
 
   if (showAuthForm) {

@@ -122,7 +122,7 @@ const AdminSignup = () => {
       };
 
       const adminResponse = await signupUser(adminData);
-      const adminUser = adminResponse.data;
+      const { user, token } = adminResponse.data;
 
       // Then create the hotel with images
       const formDataToSend = new FormData();
@@ -149,13 +149,15 @@ const AdminSignup = () => {
       const hotelResponse = await fetch('http://localhost:5000/api/hotels', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminUser.token}`
+          'Authorization': `Bearer ${token}`
         },
         body: formDataToSend
       });
 
       if (!hotelResponse.ok) {
-        throw new Error('Failed to create hotel');
+        const errorData = await hotelResponse.json();
+        console.error('Hotel creation error:', errorData);
+        throw new Error(`Failed to create hotel: ${errorData.message || 'Unknown error'}`);
       }
 
       alert('Admin account and hotel created successfully! You can now login.');

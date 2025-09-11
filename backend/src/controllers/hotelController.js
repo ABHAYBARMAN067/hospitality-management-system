@@ -4,12 +4,33 @@ import cloudinary from "../config/cloudinary.js";
 // Create hotel (Admin)
 export const createHotel = async (req, res) => {
   try {
-    const { name, city, address, rating, price, topDishes } = req.body;
+    const { name, city, address } = req.body;
+    
+    // Parse topDishes from the form data
+    const topDishes = [];
+    const dishImages = [];
+    
+    // Extract dish names and images
+    for (let i = 0; i < 3; i++) {
+      const dishName = req.body[`topDishes[${i}][name]`];
+      if (dishName) {
+        topDishes.push(dishName);
+        
+        // Handle dish image upload
+        const dishImageFile = req.files[`dishImage${i}`]?.[0];
+        if (dishImageFile) {
+          const dishImageResult = await cloudinary.uploader.upload(dishImageFile.path);
+          dishImages.push(dishImageResult.secure_url);
+        } else {
+          dishImages.push("");
+        }
+      }
+    }
 
-    // Image upload
+    // Hotel image upload
     let imageUrl = "";
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
+    if (req.files.hotelImage && req.files.hotelImage[0]) {
+      const result = await cloudinary.uploader.upload(req.files.hotelImage[0].path);
       imageUrl = result.secure_url;
     }
 
@@ -17,15 +38,24 @@ export const createHotel = async (req, res) => {
       name,
       city,
       address,
-      rating,
-      price,
-      topDishes: topDishes ? topDishes.split(",") : [],
+      rating: 4.0, // Default rating
+      price: 0, // Default price - can be updated later
+      topDishes,
+      dishImages,
       image: imageUrl,
     });
 
-    res.status(201).json(hotel);
+    res.status(201).json({
+      success: true,
+      data: hotel,
+      message: "Hotel created successfully"
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error creating hotel:", error);
+    res.status(500).json({ 
+      success: false,
+      message: error.message 
+    });
   }
 };
 

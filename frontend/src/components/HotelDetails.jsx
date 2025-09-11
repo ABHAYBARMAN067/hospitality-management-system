@@ -1,16 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getTablesByHotel } from '../utils/api';
 
 const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  
-  // Mock available tables data
-  const availableTables = [
-    { id: 1, name: "Table 1", capacity: 2, price: hotel.price, status: "available" },
-    { id: 2, name: "Table 2", capacity: 4, price: hotel.price, status: "available" },
-    { id: 3, name: "Table 3", capacity: 6, price: hotel.price, status: "available" },
-    { id: 4, name: "Table 4", capacity: 8, price: hotel.price, status: "available" },
-  ];
+  const [availableTables, setAvailableTables] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        setLoading(true);
+        const response = await getTablesByHotel(hotel._id || hotel.id);
+        setAvailableTables(response.data);
+      } catch (err) {
+        console.error('Error fetching tables:', err);
+        setError('Failed to load tables');
+        // Fallback to mock data
+        setAvailableTables([
+          { _id: 1, name: "Table 1", capacity: 2, price: hotel.price || 2000, status: "available" },
+          { _id: 2, name: "Table 2", capacity: 4, price: hotel.price || 2000, status: "available" },
+          { _id: 3, name: "Table 3", capacity: 6, price: hotel.price || 2000, status: "available" },
+          { _id: 4, name: "Table 4", capacity: 8, price: hotel.price || 2000, status: "available" },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (hotel) {
+      fetchTables();
+    }
+  }, [hotel]);
 
   const handleTableSelect = (table) => {
     if (!selectedDate || !selectedTime) {
@@ -101,24 +123,44 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
         {/* Available Tables */}
         <div>
           <h3 className="text-xl font-semibold mb-4 text-gray-800">Available Tables</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {availableTables.map((table) => (
-              <div 
-                key={table.id}
-                className="border-2 border-gray-200 rounded-lg p-4 text-center hover:border-red-300 cursor-pointer transition-colors"
-                onClick={() => handleTableSelect(table)}
-              >
-                <h4 className="font-semibold text-gray-800 mb-2">{table.name}</h4>
-                <p className="text-gray-600 mb-2">Capacity: {table.capacity} people</p>
-                <p className="text-red-600 font-bold">₹{table.price}</p>
-                <div className="mt-2">
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                    Available
-                  </span>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading tables...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8">
+              <p className="text-red-600 mb-2">{error}</p>
+              <p className="text-gray-600">Showing sample tables</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {availableTables.map((table) => (
+                <div 
+                  key={table._id || table.id}
+                  className={`border-2 rounded-lg p-4 text-center transition-colors ${
+                    table.status === 'available' 
+                      ? 'border-gray-200 hover:border-red-300 cursor-pointer' 
+                      : 'border-gray-300 bg-gray-100 cursor-not-allowed'
+                  }`}
+                  onClick={() => table.status === 'available' && handleTableSelect(table)}
+                >
+                  <h4 className="font-semibold text-gray-800 mb-2">{table.name}</h4>
+                  <p className="text-gray-600 mb-2">Capacity: {table.capacity} people</p>
+                  <p className="text-red-600 font-bold">₹{table.price}</p>
+                  <div className="mt-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      table.status === 'available' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {table.status === 'available' ? 'Available' : 'Booked'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -37,6 +37,12 @@ export const updateHotel = (id, formData) => API.put(`/hotels/${id}`, formData, 
 });
 export const deleteHotel = (id) => API.delete(`/hotels/${id}`);
 
+// Table APIs
+export const getTablesByHotel = (hotelId) => API.get(`/tables/hotel/${hotelId}`);
+export const createTable = (tableData) => API.post("/tables", tableData);
+export const updateTable = (id, tableData) => API.put(`/tables/${id}`, tableData);
+export const deleteTable = (id) => API.delete(`/tables/${id}`);
+
 // Booking APIs
 export const createBooking = (bookingData) => API.post("/bookings", bookingData);
 export const getUserBookings = () => API.get("/bookings/user");
