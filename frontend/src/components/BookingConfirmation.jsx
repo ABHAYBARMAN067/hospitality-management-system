@@ -6,6 +6,8 @@ const BookingConfirmation = ({ bookingDetails, onBack, onConfirm }) => {
   const { user, login, signup } = useContext(AuthContext);
   const [showAuthForm, setShowAuthForm] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -50,22 +52,48 @@ const BookingConfirmation = ({ bookingDetails, onBack, onConfirm }) => {
       setShowAuthForm(true);
       return;
     }
-    
+
+    setError('');
+    setLoading(true);
+
     try {
+      // Validate booking date
+      const selectedDate = new Date(bookingDetails.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate < today) {
+        setError('Please select a future date for booking');
+        return;
+      }
+
+      // Validate time format
+      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(bookingDetails.time)) {
+        setError('Invalid time format. Please use HH:MM format');
+        return;
+      }
+
       const bookingData = {
         hotel: bookingDetails.hotelId,
         table: bookingDetails._id || bookingDetails.id,
-        date: bookingDetails.date,
+        date: selectedDate.toISOString(),
         time: bookingDetails.time,
         price: bookingDetails.price
       };
+
+      const response = await createBooking(bookingData);
       
-      await createBooking(bookingData);
-      alert('Booking confirmed successfully! You can view it in MyTable section.');
-      onConfirm(bookingDetails);
+      if (response.success) {
+        onConfirm(bookingDetails);
+      } else {
+        setError(response.message || 'Failed to create booking. Please try again.');
+      }
     } catch (error) {
       console.error('Booking error:', error);
-      alert('Failed to create booking. Please try again.');
+      setError(error.response?.data?.message || 'Failed to create booking. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

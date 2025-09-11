@@ -1,21 +1,21 @@
 import Hotel from "../models/Hotel.js";
 import cloudinary from "../config/cloudinary.js";
 
-// Create hotel (Admin)
+// Create hotel
 export const createHotel = async (req, res) => {
   try {
     const { name, city, address } = req.body;
-    
+
     // Parse topDishes from the form data
     const topDishes = [];
     const dishImages = [];
-    
+
     // Extract dish names and images
     for (let i = 0; i < 3; i++) {
       const dishName = req.body[`topDishes[${i}][name]`];
       if (dishName) {
         topDishes.push(dishName);
-        
+
         // Handle dish image upload
         const dishImageFile = req.files[`dishImage${i}`]?.[0];
         if (dishImageFile) {
@@ -51,22 +51,41 @@ export const createHotel = async (req, res) => {
       message: "Hotel created successfully"
     });
   } catch (error) {
-    console.error("Error creating hotel:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: error.message 
+      message: error.message
     });
   }
 };
 
 // Get hotels by city
 export const getHotelsByCity = async (req, res) => {
-  const { city } = req.params;
   try {
-    const hotels = await Hotel.find({ city });
-    res.json(hotels);
+    const { city } = req.params;
+
+    if (!city) {
+      res.status(400).json({
+        success: false,
+        message: "City parameter is required"
+      });
+      return;
+    }
+
+    // Case-insensitive search for city
+    const hotels = await Hotel.find({
+      city: { $regex: new RegExp(city, 'i') }
+    });
+
+    res.json({
+      success: true,
+      data: hotels,
+      message: `Hotels in ${city} fetched successfully`
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
@@ -74,9 +93,77 @@ export const getHotelsByCity = async (req, res) => {
 export const getHotelById = async (req, res) => {
   try {
     const hotel = await Hotel.findById(req.params.id);
-    if (!hotel) return res.status(404).json({ message: "Hotel not found" });
-    res.json(hotel);
+
+    if (!hotel) {
+      return res.status(404).json({
+        success: false,
+        message: "Hotel not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: hotel,
+      message: "Hotel details fetched successfully"
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Update hotel
+export const updateHotel = async (req, res) => {
+  try {
+    const { name, city, address, price } = req.body;
+    const hotel = await Hotel.findByIdAndUpdate(
+      req.params.id,
+      { name, city, address, price },
+      { new: true }
+    );
+
+    if (!hotel) {
+      return res.status(404).json({
+        success: false,
+        message: "Hotel not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: hotel,
+      message: "Hotel updated successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Delete hotel
+export const deleteHotel = async (req, res) => {
+  try {
+    const hotel = await Hotel.findByIdAndDelete(req.params.id);
+
+    if (!hotel) {
+      return res.status(404).json({
+        success: false,
+        message: "Hotel not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Hotel deleted successfully"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };

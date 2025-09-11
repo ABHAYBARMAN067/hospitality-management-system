@@ -13,7 +13,19 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
       try {
         setLoading(true);
         const response = await getTablesByHotel(hotel._id || hotel.id);
-        setAvailableTables(response.data);
+        // Check if we have data and it's in the correct format
+        if (response?.data?.data) {
+          setAvailableTables(response.data.data);
+        } else {
+          setError('No tables found');
+          // Fallback to mock data
+          setAvailableTables([
+            { _id: 1, name: "Table 1", capacity: 2, price: hotel.price || 2000, status: "available" },
+            { _id: 2, name: "Table 2", capacity: 4, price: hotel.price || 2000, status: "available" },
+            { _id: 3, name: "Table 3", capacity: 6, price: hotel.price || 2000, status: "available" },
+            { _id: 4, name: "Table 4", capacity: 8, price: hotel.price || 2000, status: "available" },
+          ]);
+        }
       } catch (err) {
         console.error('Error fetching tables:', err);
         setError('Failed to load tables');
@@ -34,18 +46,50 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
     }
   }, [hotel]);
 
+  const validateDateTime = () => {
+    const selectedDateObj = new Date(selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDateObj < today) {
+      setError('Please select a future date');
+      return false;
+    }
+
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeRegex.test(selectedTime)) {
+      setError('Please select a valid time (HH:MM format)');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleTableSelect = (table) => {
+    setError(null);
+
     if (!selectedDate || !selectedTime) {
-      alert('Please select date and time first');
+      setError('Please select both date and time');
       return;
     }
-    onTableSelect({ ...table, date: selectedDate, time: selectedTime });
+
+    if (!validateDateTime()) {
+      return;
+    }
+
+    onTableSelect({
+      ...table,
+      date: selectedDate,
+      time: selectedTime,
+      tableName: table.name,
+      capacity: table.capacity
+    });
   };
 
   return (
     <div className="p-6">
       {/* Back Button */}
-      <button 
+      <button
         onClick={onBack}
         className="mb-6 flex items-center text-red-600 hover:text-red-700"
       >
@@ -89,7 +133,7 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
       {/* Booking Section */}
       <div className="bg-white rounded-2xl shadow-lg p-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Book Your Table</h2>
-        
+
         {/* Date and Time Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
@@ -136,24 +180,22 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {availableTables.map((table) => (
-                <div 
+                <div
                   key={table._id || table.id}
-                  className={`border-2 rounded-lg p-4 text-center transition-colors ${
-                    table.status === 'available' 
-                      ? 'border-gray-200 hover:border-red-300 cursor-pointer' 
+                  className={`border-2 rounded-lg p-4 text-center transition-colors ${table.status === 'available'
+                      ? 'border-gray-200 hover:border-red-300 cursor-pointer'
                       : 'border-gray-300 bg-gray-100 cursor-not-allowed'
-                  }`}
+                    }`}
                   onClick={() => table.status === 'available' && handleTableSelect(table)}
                 >
                   <h4 className="font-semibold text-gray-800 mb-2">{table.name}</h4>
                   <p className="text-gray-600 mb-2">Capacity: {table.capacity} people</p>
                   <p className="text-red-600 font-bold">₹{table.price}</p>
                   <div className="mt-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      table.status === 'available' 
-                        ? 'bg-green-100 text-green-800' 
+                    <span className={`text-xs px-2 py-1 rounded-full ${table.status === 'available'
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }`}>
+                      }`}>
                       {table.status === 'available' ? 'Available' : 'Booked'}
                     </span>
                   </div>

@@ -12,43 +12,20 @@ const HotelList = ({ city, onHotelSelect }) => {
       try {
         setLoading(true);
         const response = await getHotelsByCity(city);
-        setHotels(response.data);
+        // Check if we have data and it's in the correct format
+        if (response?.data?.data) {
+          setHotels(response.data.data);
+        } else {
+          // Fallback data if no hotels found
+          setHotels([]);
+          setError('No hotels found');
+        }
       } catch (err) {
         console.error('Error fetching hotels:', err);
         setError('Failed to load hotels');
-        // Fallback to mock data if API fails
-        setHotels([
-          {
-            _id: 1,
-            name: "The Taj",
-            city: city,
-            address: "123 Marine Drive, " + city,
-            price: 4500,
-            image: "https://source.unsplash.com/400x300/?hotel,room",
-            topDishes: ["Butter Chicken", "Biryani", "Tandoori Roti"],
-            rating: 4.8
-          },
-          {
-            _id: 2,
-            name: "Oberoi Hotel",
-            city: city,
-            address: "456 Luxury Street, " + city,
-            price: 6000,
-            image: "https://source.unsplash.com/400x300/?resort,hotel",
-            topDishes: ["Dal Makhani", "Paneer Tikka", "Naan"],
-            rating: 4.6
-          },
-          {
-            _id: 3,
-            name: "Leela Palace",
-            city: city,
-            address: "789 Royal Avenue, " + city,
-            price: 5500,
-            image: "https://source.unsplash.com/400x300/?luxury,hotel",
-            topDishes: ["Kebab", "Curry", "Rice"],
-            rating: 4.7
-          }
-        ]);
+        
+        // Set empty array for hotels to prevent map error
+        setHotels([]);
       } finally {
         setLoading(false);
       }
