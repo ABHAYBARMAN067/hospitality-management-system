@@ -253,16 +253,14 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
           )}
         </div>
         <div className="mt-6 flex justify-end">
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedDate || !selectedTime || !selectedTable}
-            className={`px-6 py-3 rounded-lg font-semibold text-white transition-colors ${(!selectedDate || !selectedTime || !selectedTable)
-                ? 'bg-red-300 cursor-not-allowed'
-                : 'bg-red-600 hover:bg-red-700'
-              }`}
-          >
-            Submit
-          </button>
+        <button
+  onClick={handleSubmit}
+  disabled={!selectedDate || !selectedTime || !selectedTable}
+  className={`px-6 py-3 rounded-lg font-semibold text-white transition-colors bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed`}
+>
+  Submit
+</button>
+
         </div>
       </div>
     </div>

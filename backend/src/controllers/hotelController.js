@@ -1,5 +1,5 @@
 import Hotel from "../models/Hotel.js";
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { uploadImage } from "../config/cloudinary.js";
 
 // Create hotel
 export const createHotel = async (req, res) => {
@@ -10,20 +10,24 @@ export const createHotel = async (req, res) => {
     const topDishes = [];
     const dishImages = [];
 
-    // Extract dish names and images
-    for (let i = 0; i < 3; i++) {
-      const dishName = req.body[`topDishes[${i}][name]`];
-      if (dishName) {
-        topDishes.push(dishName);
+    // Debug: log received file fields
+    const fileKeys = Object.keys(req.files || {});
+    if (fileKeys.length) {
+      console.log("Received dish image fields:", fileKeys);
+    }
 
-        // Handle dish image upload
-        const dishImageFile = req.files[`dishImage${i}`]?.[0];
-        if (dishImageFile) {
-          const dishImageResult = await cloudinary.uploader.upload(dishImageFile.path);
-          dishImages.push(dishImageResult.secure_url);
-        } else {
-          dishImages.push("");
-        }
+    // Extract dish names and images (keep indices aligned 0..2)
+    for (let i = 0; i < 3; i++) {
+      const nameKeyArray = `topDishes[${i}][name]`;
+      const dishName = req.body[nameKeyArray] || "";
+      topDishes.push(dishName);
+
+      const dishImageFile = req.files?.[`dishImage${i}`]?.[0];
+      if (dishImageFile) {
+        const uploaded = await uploadImage(dishImageFile, 'restaurant-tables/dishes');
+        dishImages.push(uploaded.url);
+      } else {
+        dishImages.push("");
       }
     }
 
@@ -40,8 +44,8 @@ export const createHotel = async (req, res) => {
       address,
       rating: 4.0, // Default rating
       price: 0, // Default price - can be updated later
-      topDishes,
-      dishImages,
+      topDishes: topDishes.filter((_, idx) => topDishes[idx] !== ""),
+      dishImages: dishImages.filter((_, idx) => topDishes[idx] !== ""),
       image: imageUrl,
     });
 

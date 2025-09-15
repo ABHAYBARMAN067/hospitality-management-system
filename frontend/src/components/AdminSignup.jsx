@@ -164,7 +164,8 @@ const AdminSignup = () => {
       navigate('/login');
     } catch (error) {
       console.error('Error:', error);
-      alert('Error creating admin account. Please try again.');
+      const message = error?.response?.data?.message || error.message || 'Error creating admin account. Please try again.';
+      alert(message);
     } finally {
       setIsSubmitting(false);
     }
