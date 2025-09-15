@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getTablesByHotel } from '../utils/api';
+import { getTablesByHotel, getHotelById } from '../utils/api';
 
 const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -7,6 +7,8 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
   const [availableTables, setAvailableTables] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hotelData, setHotelData] = useState(hotel || {});
+  const [selectedTable, setSelectedTable] = useState(null);
 
   useEffect(() => {
     const fetchTables = async () => {
@@ -43,6 +45,25 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
 
     if (hotel) {
       fetchTables();
+    }
+  }, [hotel]);
+
+  // Fetch fresh hotel details to ensure topDishes/dishImages are present
+  useEffect(() => {
+    const fetchHotel = async () => {
+      try {
+        const id = hotel._id || hotel.id;
+        if (!id) return;
+        const res = await getHotelById(id);
+        if (res?.data?.data) {
+          setHotelData(res.data.data);
+        }
+      } catch (e) {
+        // keep existing fallback hotel data
+      }
+    };
+    if (hotel) {
+      fetchHotel();
     }
   }, [hotel]);
 
@@ -86,6 +107,14 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
     });
   };
 
+  const handleSubmit = () => {
+    if (!selectedTable) {
+      setError('Please select a table');
+      return;
+    }
+    handleTableSelect(selectedTable);
+  };
+
   return (
     <div className="p-6">
       {/* Back Button */}
@@ -120,11 +149,26 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
           <div className="mb-6">
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Top Dishes</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {hotel.topDishes.map((dish, index) => (
-                <div key={index} className="bg-gray-50 p-3 rounded-lg text-center">
-                  <p className="font-medium text-gray-800">{dish}</p>
-                </div>
-              ))}
+              {(hotelData.topDishes || []).slice(0, 3).map((dishName, index) => {
+                const imageUrl = (hotelData.dishImages && hotelData.dishImages[index]) ? hotelData.dishImages[index] : null;
+                return (
+                  <div key={index} className="bg-gray-50 rounded-lg overflow-hidden shadow-sm">
+                    {imageUrl ? (
+                      <img src={imageUrl} alt={dishName} className="w-full h-32 object-cover" />
+                    ) : (
+                      <div className="w-full h-32 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                        No Image
+                      </div>
+                    )}
+                    <div className="p-3 text-center">
+                      <p className="font-medium text-gray-800">{dishName}</p>
+                    </div>
+                  </div>
+                );
+              })}
+              {(!hotelData.topDishes || hotelData.topDishes.length === 0) && (
+                <div className="text-gray-600">No dishes added yet</div>
+              )}
             </div>
           </div>
         </div>
@@ -185,8 +229,12 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
                   className={`border-2 rounded-lg p-4 text-center transition-colors ${table.status === 'available'
                       ? 'border-gray-200 hover:border-red-300 cursor-pointer'
                       : 'border-gray-300 bg-gray-100 cursor-not-allowed'
-                    }`}
-                  onClick={() => table.status === 'available' && handleTableSelect(table)}
+                    } ${selectedTable && (selectedTable._id || selectedTable.id) === (table._id || table.id) ? 'ring-2 ring-red-400' : ''}`}
+                  onClick={() => {
+                    if (table.status === 'available') {
+                      setSelectedTable(table);
+                    }
+                  }}
                 >
                   <h4 className="font-semibold text-gray-800 mb-2">{table.name}</h4>
                   <p className="text-gray-600 mb-2">Capacity: {table.capacity} people</p>
@@ -203,6 +251,18 @@ const HotelDetails = ({ hotel, onBack, onTableSelect }) => {
               ))}
             </div>
           )}
+        </div>
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedDate || !selectedTime || !selectedTable}
+            className={`px-6 py-3 rounded-lg font-semibold text-white transition-colors ${(!selectedDate || !selectedTime || !selectedTable)
+                ? 'bg-red-300 cursor-not-allowed'
+                : 'bg-red-600 hover:bg-red-700'
+              }`}
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>

@@ -25,7 +25,12 @@ router.post("/", upload.fields([
   { name: 'dishImage2', maxCount: 1 }
 ]), createHotel);
 
-router.put("/:id", updateHotel);
+router.put("/:id", upload.fields([
+  { name: 'hotelImage', maxCount: 1 },
+  { name: 'dishImage0', maxCount: 1 },
+  { name: 'dishImage1', maxCount: 1 },
+  { name: 'dishImage2', maxCount: 1 }
+]), updateHotel);
 router.delete("/:id", deleteHotel);
 
 export default router;

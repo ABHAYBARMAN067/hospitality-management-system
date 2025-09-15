@@ -1,5 +1,5 @@
 export default function HotelCard({ hotel, onSelect }) {
-    const { name, location, address, price, image, topDishes, rating } = hotel;
+    const { name, location, address, price, image, topDishes = [], rating } = hotel;
     
     return (
       <div className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition cursor-pointer" onClick={onSelect}>
@@ -18,11 +18,14 @@ export default function HotelCard({ hotel, onSelect }) {
           <div className="mb-3">
             <p className="text-sm text-gray-500 mb-1">Top Dishes:</p>
             <div className="flex flex-wrap gap-1">
-              {topDishes.map((dish, index) => (
+              {(topDishes || []).slice(0,3).map((dish, index) => (
                 <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
                   {dish}
                 </span>
               ))}
+              {(!topDishes || topDishes.length === 0) && (
+                <span className="text-xs text-gray-400">No dishes</span>
+              )}
             </div>
           </div>
           

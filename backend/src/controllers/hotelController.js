@@ -118,11 +118,41 @@ export const getHotelById = async (req, res) => {
 export const updateHotel = async (req, res) => {
   try {
     const { name, city, address, price } = req.body;
-    const hotel = await Hotel.findByIdAndUpdate(
-      req.params.id,
-      { name, city, address, price },
-      { new: true }
-    );
+
+    // Build update payload dynamically
+    const updatePayload = {};
+    if (name) updatePayload.name = name;
+    if (city) updatePayload.city = city;
+    if (address) updatePayload.address = address;
+    if (price !== undefined) updatePayload.price = price;
+
+    // Handle optional hotel image update
+    if (req.files?.hotelImage?.[0]) {
+      const result = await cloudinary.uploader.upload(req.files.hotelImage[0].path);
+      updatePayload.image = result.secure_url;
+    }
+
+    // Handle optional top dishes and their images
+    const updatedTopDishes = [];
+    const updatedDishImages = [];
+    for (let i = 0; i < 3; i++) {
+      const dishName = req.body[`topDishes[${i}][name]`];
+      const dishImageFile = req.files?.[`dishImage${i}`]?.[0];
+      if (dishName || dishImageFile) {
+        // Only push when at least name or image provided
+        if (dishName) updatedTopDishes.push(dishName);
+        if (dishImageFile) {
+          const uploadRes = await cloudinary.uploader.upload(dishImageFile.path);
+          updatedDishImages.push(uploadRes.secure_url);
+        } else {
+          updatedDishImages.push("");
+        }
+      }
+    }
+    if (updatedTopDishes.length > 0) updatePayload.topDishes = updatedTopDishes;
+    if (updatedDishImages.length > 0) updatePayload.dishImages = updatedDishImages;
+
+    const hotel = await Hotel.findByIdAndUpdate(req.params.id, updatePayload, { new: true });
 
     if (!hotel) {
       return res.status(404).json({
