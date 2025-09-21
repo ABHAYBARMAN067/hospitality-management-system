@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Adminregistration = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +9,10 @@ const Adminregistration = () => {
     phone: '',
     hotelName: '',
     hotelAddress: '',
+    hotelCity: '',
+    hotelState: '',
+    hotelZipCode: '',
+    hotelDescription: '',
     rentPerDay: '',
     hotelImage: null,
     topDishes: [
@@ -23,69 +26,89 @@ const Adminregistration = () => {
   const [phoneError, setPhoneError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
 
-  const { register } = useAuth();
   const navigate = useNavigate();
 
-  // Phone validation function
   const validatePhone = (phone) => {
-    if (!phone) return ''; // Empty is valid (optional field)
+    if (!phone) return '';
     const phoneRegex = /^\+?[\d\s-()]+$/;
     if (!phoneRegex.test(phone)) {
       return 'Please enter a valid phone number (digits, spaces, hyphens, parentheses, and + prefix allowed)';
     }
-    if (phone.replace(/\D/g, '').length < 10) {
+    const digitsOnly = phone.replace(/\D/g, '');
+    if (digitsOnly.length < 10) {
       return 'Phone number must be at least 10 digits';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    // Updated email regex to match backend validation
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address (e.g., user@example.com)';
+    }
+    return '';
+  };
+
+  const validateHotelDescription = (desc) => {
+    if (!desc || desc.trim().length < 10 || desc.trim().length > 1000) {
+      return 'Hotel description must be between 10 and 1000 characters';
+    }
+    return '';
+  };
+
+  // New validation to require hotelDescription if role is admin
+  const validateHotelDescriptionRequired = (desc, role) => {
+    if (role === 'admin') {
+      if (!desc || desc.trim().length < 10 || desc.trim().length > 1000) {
+        return 'Hotel description must be between 10 and 1000 characters';
+      }
     }
     return '';
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-
-    // Clear field-specific errors when user starts typing
     if (fieldErrors[name]) {
-      setFieldErrors({
-        ...fieldErrors,
-        [name]: ''
-      });
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
     }
 
-    // Validate phone number in real-time
     if (name === 'phone') {
       const error = validatePhone(value);
       setPhoneError(error);
+    }
+
+    if (name === 'email') {
+      const error = validateEmail(value);
+      setFieldErrors(prev => ({ ...prev, email: error }));
+    }
+
+    if (name === 'hotelDescription' || name === 'role') {
+      const error = validateHotelDescriptionRequired(
+        name === 'hotelDescription' ? value : formData.hotelDescription,
+        name === 'role' ? value : formData.role
+      );
+      setFieldErrors(prev => ({ ...prev, hotelDescription: error }));
     }
   };
 
   const handleDishChange = (index, field, value) => {
     const updatedDishes = [...formData.topDishes];
     updatedDishes[index][field] = value;
-    setFormData({
-      ...formData,
-      topDishes: updatedDishes
-    });
+    setFormData(prev => ({ ...prev, topDishes: updatedDishes }));
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (name === 'hotelImage') {
-      setFormData({
-        ...formData,
-        hotelImage: files[0]
-      });
+      setFormData(prev => ({ ...prev, hotelImage: files[0] }));
     } else if (name.startsWith('dishImage')) {
-      const index = parseInt(name.replace('dishImage', ''));
+      const index = parseInt(name.replace('dishImage', ''), 10);
       const updatedDishes = [...formData.topDishes];
       updatedDishes[index].image = files[0];
-      setFormData({
-        ...formData,
-        topDishes: updatedDishes
-      });
+      setFormData(prev => ({ ...prev, topDishes: updatedDishes }));
     }
   };
 
@@ -98,32 +121,39 @@ const Adminregistration = () => {
     try {
       const formDataToSend = new FormData();
 
-      // Add user fields
       formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
+      // Trim email to avoid invalid format errors
+      formDataToSend.append('email', formData.email.trim());
       formDataToSend.append('password', formData.password);
       formDataToSend.append('phone', formData.phone || '');
       formDataToSend.append('role', 'admin');
 
-      // Add hotel fields
       formDataToSend.append('hotelName', formData.hotelName);
       formDataToSend.append('hotelAddress', formData.hotelAddress);
+      formDataToSend.append('hotelCity', formData.hotelCity);
+      formDataToSend.append('hotelState', formData.hotelState);
+      formDataToSend.append('hotelZipCode', formData.hotelZipCode);
+      // Trim hotelDescription to avoid empty string errors
+      formDataToSend.append('hotelDescription', formData.hotelDescription.trim());
       formDataToSend.append('rentPerDay', formData.rentPerDay);
 
-      // Add hotel image
       if (formData.hotelImage) {
-        formDataToSend.append('hotelImage', formData.hotelImage);
+        formDataToSend.append('hotelImage', formData.hotelImage, formData.hotelImage.name);
       }
 
-      // Add top dishes
+      // Fix: send topDishes as array of objects with name only, images are sent separately
+      const topDishesArray = formData.topDishes.map(dish => ({
+        name: dish.name
+      }));
+      formDataToSend.append('topDishes', JSON.stringify(topDishesArray));
+
       formData.topDishes.forEach((dish, index) => {
-        if (dish.name && dish.image) {
-          formDataToSend.append(`topDishes[${index}][name]`, dish.name);
-          formDataToSend.append(`topDishes[${index}][image]`, dish.image);
+        if (dish.image) {
+          formDataToSend.append(`dishImage${index}`, dish.image, dish.image.name);
         }
       });
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/signup`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/signup`, {
         method: 'POST',
         body: formDataToSend
       });
@@ -131,11 +161,8 @@ const Adminregistration = () => {
       const result = await response.json();
 
       if (result.success) {
-        // Store token and user info
         localStorage.setItem('token', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
-
-        // Navigate based on role
         if (result.user.role === 'admin') {
           navigate('/admin');
         } else {
@@ -145,20 +172,10 @@ const Adminregistration = () => {
         if (result.validationErrors) {
           const newFieldErrors = {};
           result.validationErrors.forEach(err => {
-            if (err.param === 'name') {
-              newFieldErrors.name = err.msg;
-            } else if (err.param === 'email') {
-              newFieldErrors.email = err.msg;
-            } else if (err.param === 'password') {
-              newFieldErrors.password = err.msg;
-            } else if (err.param === 'phone') {
+            if (err.param === 'phone') {
               setPhoneError(err.msg);
-            } else if (err.param === 'hotelName') {
-              newFieldErrors.hotelName = err.msg;
-            } else if (err.param === 'hotelAddress') {
-              newFieldErrors.hotelAddress = err.msg;
-            } else if (err.param === 'rentPerDay') {
-              newFieldErrors.rentPerDay = err.msg;
+            } else {
+              newFieldErrors[err.param] = err.msg;
             }
           });
           setFieldErrors(newFieldErrors);
@@ -207,6 +224,9 @@ const Adminregistration = () => {
                     placeholder="Enter your full name"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.name && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.name}</p>
+                  )}
                 </div>
 
                 <div>
@@ -223,6 +243,9 @@ const Adminregistration = () => {
                     placeholder="Enter your email"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.email && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -238,6 +261,9 @@ const Adminregistration = () => {
                     placeholder="Enter your phone number"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {phoneError && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{phoneError}</p>
+                  )}
                 </div>
 
                 <div>
@@ -254,6 +280,9 @@ const Adminregistration = () => {
                     placeholder="Enter your password"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.password && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.password}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -276,11 +305,14 @@ const Adminregistration = () => {
                     placeholder="Enter your hotel name"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.hotelName && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelName}</p>
+                  )}
                 </div>
 
                 <div>
                   <label htmlFor="hotelAddress" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
-                    Hotel Address
+                    Hotel Address (Street)
                   </label>
                   <input
                     type="text"
@@ -289,9 +321,90 @@ const Adminregistration = () => {
                     value={formData.hotelAddress}
                     onChange={handleChange}
                     required
-                    placeholder="Enter hotel address"
+                    placeholder="Enter hotel street address"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.hotelAddress && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelAddress}</p>
+                  )}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label htmlFor="hotelCity" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      id="hotelCity"
+                      name="hotelCity"
+                      value={formData.hotelCity}
+                      onChange={handleChange}
+                      required
+                      placeholder="City"
+                      style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
+                    />
+                    {fieldErrors.hotelCity && (
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelCity}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="hotelState" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                      State
+                    </label>
+                    <input
+                      type="text"
+                      id="hotelState"
+                      name="hotelState"
+                      value={formData.hotelState}
+                      onChange={handleChange}
+                      required
+                      placeholder="State"
+                      style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
+                    />
+                    {fieldErrors.hotelState && (
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelState}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="hotelZipCode" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                      ZIP Code
+                    </label>
+                    <input
+                      type="text"
+                      id="hotelZipCode"
+                      name="hotelZipCode"
+                      value={formData.hotelZipCode}
+                      onChange={handleChange}
+                      required
+                      placeholder="ZIP Code"
+                      style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
+                    />
+                    {fieldErrors.hotelZipCode && (
+                      <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelZipCode}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="hotelDescription" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+                    Hotel Description
+                  </label>
+                  <textarea
+                    id="hotelDescription"
+                    name="hotelDescription"
+                    value={formData.hotelDescription}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter hotel description"
+                    rows="3"
+                    style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
+                  />
+                  {fieldErrors.hotelDescription && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.hotelDescription}</p>
+                  )}
                 </div>
 
                 <div>
@@ -308,6 +421,9 @@ const Adminregistration = () => {
                     placeholder="Enter rent per day"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
+                  {fieldErrors.rentPerDay && (
+                    <p style={{ color: '#dc2626', fontSize: '12px', marginTop: '4px' }}>{fieldErrors.rentPerDay}</p>
+                  )}
                 </div>
 
                 <div>
@@ -409,3 +525,4 @@ const Adminregistration = () => {
 };
 
 export default Adminregistration;
+

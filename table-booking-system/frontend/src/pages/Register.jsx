@@ -126,23 +126,27 @@ const Register = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 16px' }}>
-      <div style={{ maxWidth: '400px', width: '100%', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>User Registration</h1>
-          <p style={{ color: '#6b7280' }}>Create your user account</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">User Registration</h1>
+          <p className="text-gray-600">Create your user account</p>
         </div>
 
-        <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', padding: '32px' }}>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        {/* Form */}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* General Error Message */}
             {error && (
-              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '16px', borderRadius: '8px', fontSize: '14px' }}>
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
+            {/* Full Name Field */}
             <div>
-              <label htmlFor="name" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name
               </label>
               <input
@@ -153,22 +157,20 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your full name"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: fieldErrors.name ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  background: fieldErrors.name ? '#fef2f2' : 'white'
-                }}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors hover:border-gray-400 ${
+                  fieldErrors.name
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 bg-white'
+                }`}
               />
               {fieldErrors.name && (
-                <p style={{ marginTop: '8px', fontSize: '14px', color: '#dc2626' }}>{fieldErrors.name}</p>
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.name}</p>
               )}
             </div>
 
+            {/* Email Field */}
             <div>
-              <label htmlFor="email" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -179,23 +181,21 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your email"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: fieldErrors.email ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  background: fieldErrors.email ? '#fef2f2' : 'white'
-                }}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors hover:border-gray-400 ${
+                  fieldErrors.email
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 bg-white'
+                }`}
               />
               {fieldErrors.email && (
-                <p style={{ marginTop: '8px', fontSize: '14px', color: '#dc2626' }}>{fieldErrors.email}</p>
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.email}</p>
               )}
             </div>
 
+            {/* Phone Field */}
             <div>
-              <label htmlFor="phone" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
-                Phone Number <span style={{ color: '#6b7280', fontSize: '12px' }}>(Optional)</span>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number <span className="text-gray-500 text-xs">(Optional)</span>
               </label>
               <input
                 type="tel"
@@ -204,22 +204,20 @@ const Register = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Enter your phone number"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: phoneError ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  background: phoneError ? '#fef2f2' : 'white'
-                }}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors hover:border-gray-400 ${
+                  phoneError
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 bg-white'
+                }`}
               />
               {phoneError && (
-                <p style={{ marginTop: '8px', fontSize: '14px', color: '#dc2626' }}>{phoneError}</p>
+                <p className="mt-2 text-sm text-red-600">{phoneError}</p>
               )}
             </div>
 
+            {/* Password Field */}
             <div>
-              <label htmlFor="password" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <input
@@ -230,22 +228,20 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 placeholder="Enter your password"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: fieldErrors.password ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  background: fieldErrors.password ? '#fef2f2' : 'white'
-                }}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors hover:border-gray-400 ${
+                  fieldErrors.password
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 bg-white'
+                }`}
               />
               {fieldErrors.password && (
-                <p style={{ marginTop: '8px', fontSize: '14px', color: '#dc2626' }}>{fieldErrors.password}</p>
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.password}</p>
               )}
             </div>
 
+            {/* Confirm Password Field */}
             <div>
-              <label htmlFor="confirmPassword" style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '8px' }}>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
                 Confirm Password
               </label>
               <input
@@ -256,61 +252,57 @@ const Register = () => {
                 onChange={handleChange}
                 required
                 placeholder="Confirm your password"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  border: fieldErrors.confirmPassword ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  background: fieldErrors.confirmPassword ? '#fef2f2' : 'white'
-                }}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors hover:border-gray-400 ${
+                  fieldErrors.confirmPassword
+                    ? 'border-red-300 bg-red-50'
+                    : 'border-gray-300 bg-white'
+                }`}
               />
               {fieldErrors.confirmPassword && (
-                <p style={{ marginTop: '8px', fontSize: '14px', color: '#dc2626' }}>{fieldErrors.confirmPassword}</p>
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
               )}
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: 'white',
-                background: loading ? '#9ca3af' : '#3b82f6',
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? (
+                <div className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating Account...
+                </div>
+              ) : (
+                'Create Account'
+              )}
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '24px' }}>
-            <p style={{ color: '#6b7280' }}>
+          {/* Sign In Link */}
+          <div className="text-center mt-6">
+            <p className="text-gray-600">
               Already have an account?{' '}
               <Link
                 to="/login"
-                style={{ fontWeight: '500', color: '#3b82f6', textDecoration: 'none' }}
-                onMouseOver={(e) => e.target.style.color = '#1d4ed8'}
-                onMouseOut={(e) => e.target.style.color = '#3b82f6'}
+                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
               >
                 Sign in here
               </Link>
             </p>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            <p style={{ color: '#6b7280', fontSize: '14px' }}>
+          {/* Admin Registration Link */}
+          <div className="text-center mt-4">
+            <p className="text-gray-600 text-sm">
               Want to register as an admin?{' '}
               <Link
                 to="/admin-registration"
-                style={{ fontWeight: '500', color: '#10b981', textDecoration: 'none' }}
-                onMouseOver={(e) => e.target.style.color = '#059669'}
-                onMouseOut={(e) => e.target.style.color = '#10b981'}
+                className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors"
               >
                 Click here
               </Link>

@@ -9,25 +9,18 @@ const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(`
-╔══════════════════════════════════════════════════════════╗
-║                 🚀 Table Booking API Server              ║
-║                                                          ║
-║  Server running in ${process.env.NODE_ENV || 'development'} mode ║
-║  Port: ${PORT}                                           ║
-║  Health check: http://localhost:${PORT}/health          ║
-║  API Base URL: http://localhost:${PORT}/api             ║
-║                                                          ║
-║  Available endpoints:                                    ║
-║  • POST /api/auth/signup - User registration             ║
-║  • POST /api/auth/login - User login                     ║
-║  • GET /api/auth/me - Get current user                   ║
-║  • GET /api/hotels - Get all hotels                      ║
-║  • GET /api/hotels/:id - Get single hotel                ║
-║  • POST /api/bookings - Create booking                   ║
-║  • GET /api/bookings/my-bookings - Get user bookings     ║
-║                                                          ║
-║  Database: ${process.env.MONGODB_URI ? 'Connected' : 'Not configured'} ║
-╚══════════════════════════════════════════════════════════╝
+
+            Table Booking API Server             
+                                                         
+  Server running in ${process.env.NODE_ENV || 'development'} mode 
+  Port: ${PORT}                                           
+  Health check: http://localhost:${PORT}/health          
+    API Base URL: http://localhost:${PORT}/api             
+                                                          
+    ║
+                                                         
+  Database: ${process.env.MONGODB_URI ? 'Connected' : 'Not configured'} 
+
 `);
 });
 

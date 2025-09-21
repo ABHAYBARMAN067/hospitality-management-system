@@ -20,7 +20,7 @@ const signupValidation = [
   body('email')
     .isEmail()
     .normalizeEmail()
-    .matches(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})*$/)
+    .matches(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/)
     .withMessage('Please provide a valid email (e.g., user@example.com)'),
   body('password')
     .isLength({ min: 6 })
@@ -52,8 +52,29 @@ const signupValidation = [
   body('hotelAddress')
     .if(body('role').equals('admin'))
     .trim()
-    .isLength({ min: 5, max: 200 })
-    .withMessage('Hotel address must be between 5 and 200 characters'),
+    .isLength({ min: 2, max: 200 })
+    .withMessage('Hotel street address must be between 2 and 200 characters'),
+  body('hotelCity')
+    .if(body('role').equals('admin'))
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Hotel city must be between 2 and 50 characters'),
+  body('hotelState')
+    .if(body('role').equals('admin'))
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Hotel state must be between 2 and 50 characters'),
+  body('hotelZipCode')
+    .if(body('role').equals('admin'))
+    .trim()
+    .isLength({ min: 5, max: 10 })
+    .withMessage('Hotel ZIP code must be between 5 and 10 characters'),
+  body('hotelDescription')
+    .if(body('role').equals('admin'))
+    .optional()
+    .trim()
+    .isLength({ min: 10, max: 1000 })
+    .withMessage('Hotel description must be between 10 and 1000 characters'),
   body('rentPerDay')
     .if(body('role').equals('admin'))
     .isNumeric()
@@ -95,6 +116,18 @@ const profileValidation = [
     })
 ];
 
+// Middleware to parse JSON fields in multipart/form-data
+const parseJsonFields = (req, res, next) => {
+  if (req.body.topDishes) {
+    try {
+      req.body.topDishes = JSON.parse(req.body.topDishes);
+    } catch (err) {
+      return res.status(400).json({ success: false, message: 'Invalid JSON in topDishes field' });
+    }
+  }
+  next();
+};
+
 // Public routes
 // Use multer for file uploads in signup
 router.post('/signup', upload.fields([
@@ -105,7 +138,7 @@ router.post('/signup', upload.fields([
   { name: 'dishImage3', maxCount: 1 },
   { name: 'dishImage4', maxCount: 1 },
   { name: 'dishImage5', maxCount: 1 }
-]), signupValidation, signup);
+]), parseJsonFields, signupValidation, signup);
 
 router.post('/login', loginValidation, login);
 

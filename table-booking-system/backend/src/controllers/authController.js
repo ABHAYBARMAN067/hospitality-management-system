@@ -39,12 +39,30 @@ const signup = async (req, res) => {
       console.log('Request headers:', req.headers);
       return res.status(400).json({
         success: false,
-        message: 'Validation errors occurred',
-        errors: errors.array()
+        message: 'Invalid input, please check your data',
+        fields: errors.array().map(err => ({
+          field: err.path,
+          message: err.msg
+        }))
       });
     }
 
-    const { name, email, password, phone, role, hotelName, hotelAddress, rentPerDay, topDishes } = req.body;
+    const { name, email, password, phone, role, hotelName, hotelAddress, hotelCity, hotelState, hotelZipCode, hotelDescription, rentPerDay } = req.body;
+
+    // Parse topDishes JSON string to array without strict validation
+    let topDishesData = [];
+    if (req.body.topDishes) {
+      try {
+        // Try to parse JSON, but if fails, accept as empty array (relax validation)
+        topDishesData = JSON.parse(req.body.topDishes);
+        if (!Array.isArray(topDishesData)) {
+          topDishesData = [];
+        }
+      } catch (err) {
+        console.warn('Invalid topDishes format, ignoring and proceeding:', err);
+        topDishesData = [];
+      }
+    }
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -83,28 +101,51 @@ const signup = async (req, res) => {
         role: 'admin'
       });
 
-      // Create hotel
+      // Create address object from individual fields
+      let addressObj = {
+        street: hotelAddress || '',
+        city: hotelCity || 'City',
+        state: hotelState || 'State',
+        zipCode: hotelZipCode || '12345',
+        country: 'USA'
+      };
+
+      // Set default hotelDescription if empty string or not provided
+      const hotelDesc = hotelDescription && hotelDescription.trim().length > 0
+        ? hotelDescription
+        : `${hotelName} - A premium hospitality destination offering exceptional service and comfort.`;
+
+      // Create hotel with all required fields
       hotel = await Hotel.create({
         name: hotelName,
-        address: {
-          street: hotelAddress,
-          city: 'City', // You might want to add city field to form
-          state: 'State', // You might want to add state field to form
-          zipCode: '12345', // You might want to add zipCode field to form
-          country: 'USA'
-        },
+        description: hotelDesc,
+        address: addressObj,
+        email: email, // Use user's email as hotel email
         images: hotelImageUrl ? [hotelImageUrl] : [],
         owner: user._id,
         isActive: true
       });
 
       // Create top dishes if provided
-      if (topDishes && Array.isArray(topDishes)) {
-        for (const dish of topDishes) {
-          if (dish.name && dish.image) {
+      if (topDishesData && Array.isArray(topDishesData)) {
+        // Upload all dish images in order
+        const dishImageFiles = [];
+        if (req.files) {
+          for (const key in req.files) {
+            if (key.startsWith('dishImage')) {
+              dishImageFiles.push(req.files[key][0]);
+            }
+          }
+        }
+        for (let i = 0; i < topDishesData.length; i++) {
+          const dish = topDishesData[i];
+          if (dish.name) {
             try {
-              // Upload dish image
-              const dishImageUrl = await uploadToCloudinary(dish.image, 'dishes');
+              let dishImageUrl = '';
+              // Upload dish image from dishImageFiles in order
+              if (dishImageFiles[i]) {
+                dishImageUrl = await uploadToCloudinary(dishImageFiles[i].path, 'dishes');
+              }
 
               const menuItem = await MenuItem.create({
                 hotel: hotel._id,

@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
       // Check if userData is FormData (for admin registration with files)
       const isFormData = userData instanceof FormData;
