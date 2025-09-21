@@ -1,12 +1,28 @@
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const Hotel = require('../models/Hotel');
+const MenuItem = require('../models/MenuItem');
+const cloudinary = require('../config/cloudinary');
 
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
+};
+
+// Helper function to upload image to Cloudinary
+const uploadToCloudinary = async (file, folder) => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder: folder,
+      resource_type: 'auto'
+    });
+    return result.secure_url;
+  } catch (error) {
+    throw new Error(`Image upload failed: ${error.message}`);
+  }
 };
 
 // @desc    Register user
@@ -28,7 +44,7 @@ const signup = async (req, res) => {
       });
     }
 
-    const { name, email, password, phone, role } = req.body;
+    const { name, email, password, phone, role, hotelName, hotelAddress, rentPerDay, topDishes } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -39,20 +55,91 @@ const signup = async (req, res) => {
       });
     }
 
-    // Create user
-    const user = await User.create({
-      name,
-      email,
-      password,
-      phone,
-      role: role || 'user' // Default to 'user' if no role specified
-    });
+    let user;
+    let hotel;
+    let menuItems = [];
+
+    if (role === 'admin') {
+      // Validate required admin fields
+      if (!hotelName || !hotelAddress || !rentPerDay) {
+        return res.status(400).json({
+          success: false,
+          message: 'Hotel name, address, and rent per day are required for admin registration'
+        });
+      }
+
+      // Upload hotel image if provided
+      let hotelImageUrl = '';
+      if (req.files && req.files.hotelImage) {
+        hotelImageUrl = await uploadToCloudinary(req.files.hotelImage[0].path, 'hotels');
+      }
+
+      // Create user first
+      user = await User.create({
+        name,
+        email,
+        password,
+        phone,
+        role: 'admin'
+      });
+
+      // Create hotel
+      hotel = await Hotel.create({
+        name: hotelName,
+        address: {
+          street: hotelAddress,
+          city: 'City', // You might want to add city field to form
+          state: 'State', // You might want to add state field to form
+          zipCode: '12345', // You might want to add zipCode field to form
+          country: 'USA'
+        },
+        images: hotelImageUrl ? [hotelImageUrl] : [],
+        owner: user._id,
+        isActive: true
+      });
+
+      // Create top dishes if provided
+      if (topDishes && Array.isArray(topDishes)) {
+        for (const dish of topDishes) {
+          if (dish.name && dish.image) {
+            try {
+              // Upload dish image
+              const dishImageUrl = await uploadToCloudinary(dish.image, 'dishes');
+
+              const menuItem = await MenuItem.create({
+                hotel: hotel._id,
+                name: dish.name,
+                description: `${dish.name} - Top dish`, // You might want to add description field
+                category: 'Specials', // Default category
+                price: 0, // You might want to add price field to form
+                image: dishImageUrl,
+                isAvailable: true,
+                isActive: true
+              });
+              menuItems.push(menuItem);
+            } catch (error) {
+              console.error('Error creating menu item:', error);
+              // Continue with other dishes even if one fails
+            }
+          }
+        }
+      }
+    } else {
+      // Create regular user
+      user = await User.create({
+        name,
+        email,
+        password,
+        phone,
+        role: role || 'user'
+      });
+    }
 
     const token = generateToken(user._id);
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: role === 'admin' ? 'Admin registered successfully with hotel' : 'User registered successfully',
       token,
       user: {
         id: user._id,
@@ -60,13 +147,26 @@ const signup = async (req, res) => {
         email: user.email,
         role: user.role,
         phone: user.phone
-      }
+      },
+      ...(role === 'admin' && {
+        hotel: {
+          id: hotel._id,
+          name: hotel.name,
+          address: hotel.address
+        },
+        menuItems: menuItems.map(item => ({
+          id: item._id,
+          name: item.name,
+          image: item.image
+        }))
+      })
     });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error during registration'
+      message: 'Server error during registration',
+      error: error.message
     });
   }
 };

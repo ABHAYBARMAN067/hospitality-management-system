@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Adminregistration from './pages/Adminregistration';
 import Hotels from './pages/Hotels';
 import HotelDetails from './pages/HotelDetails';
 import BookingForm from './pages/BookingForm';
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/admin-registration" element={<Adminregistration />} />
               <Route path="/hotels" element={<Hotels />} />
               <Route path="/hotels/:id" element={<HotelDetails />} />
               <Route path="/bookings/new" element={

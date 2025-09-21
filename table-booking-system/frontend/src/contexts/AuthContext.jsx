@@ -29,7 +29,8 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const response = await axios.get('http://localhost:5000/api/auth/me');
+          const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+          const response = await axios.get(`${apiUrl}/api/auth/me`);
           setUser(response.data.user);
         } catch (error) {
           console.error('Auth check failed:', error);
@@ -46,7 +47,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${apiUrl}/api/auth/login`, {
         email,
         password
       });
@@ -72,27 +74,45 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      // Clean up the data before sending
-      const cleanData = {
-        name: userData.name?.trim(),
-        email: userData.email?.trim().toLowerCase(),
-        password: userData.password,
-        phone: userData.phone?.trim() || undefined, // Send undefined if empty
-        role: userData.role || 'user'
-      };
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-      // Remove undefined values
-      Object.keys(cleanData).forEach(key => {
-        if (cleanData[key] === undefined) {
-          delete cleanData[key];
-        }
-      });
+      // Check if userData is FormData (for admin registration with files)
+      const isFormData = userData instanceof FormData;
 
-      // Log the data being sent for debugging
-      console.log('Sending registration data:', cleanData);
-      console.log('Making request to:', 'http://localhost:5000/api/auth/signup');
+      let response;
 
-      const response = await axios.post('http://localhost:5000/api/auth/signup', cleanData);
+      if (isFormData) {
+        // For admin registration with files, don't set Content-Type header
+        // Let browser set it with boundary for FormData
+        response = await axios.post(`${apiUrl}/api/auth/signup`, userData, {
+          headers: {
+            // Don't set Content-Type for FormData - let browser set it
+          }
+        });
+      } else {
+        // For regular user registration
+        // Clean up the data before sending
+        const cleanData = {
+          name: userData.name?.trim(),
+          email: userData.email?.trim().toLowerCase(),
+          password: userData.password,
+          phone: userData.phone?.trim() || undefined, // Send undefined if empty
+          role: userData.role || 'user'
+        };
+
+        // Remove undefined values
+        Object.keys(cleanData).forEach(key => {
+          if (cleanData[key] === undefined) {
+            delete cleanData[key];
+          }
+        });
+
+        // Log the data being sent for debugging
+        console.log('Sending registration data:', cleanData);
+        console.log('Making request to:', `${apiUrl}/api/auth/signup`);
+
+        response = await axios.post(`${apiUrl}/api/auth/signup`, cleanData);
+      }
 
       const { user, token } = response.data;
 
