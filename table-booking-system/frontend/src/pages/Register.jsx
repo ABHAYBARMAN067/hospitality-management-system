@@ -141,139 +141,221 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <div className="auth-header">
-          <h1>Create Account</h1>
-          <p>Join TableBooking and start booking amazing tables!</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+          <p className="text-gray-600">Join TableBooking and start booking amazing tables!</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          {error && <div className="error-message">{error}</div>}
+        {/* Form */}
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* General Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your full name"
-              className={fieldErrors.name ? 'error' : ''}
-            />
-            {fieldErrors.name && <div className="field-error">{fieldErrors.name}</div>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-              className={fieldErrors.email ? 'error' : ''}
-            />
-            {fieldErrors.email && <div className="field-error">{fieldErrors.email}</div>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number <span className="optional">(Optional)</span></label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter your phone number"
-              className={phoneError ? 'error' : ''}
-            />
-            {phoneError && <div className="field-error">{phoneError}</div>}
-            <small className="field-help">Leave empty if you don't want to provide a phone number</small>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter your password"
-              className={fieldErrors.password ? 'error' : ''}
-            />
-            {fieldErrors.password && <div className="field-error">{fieldErrors.password}</div>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-              className={fieldErrors.confirmPassword ? 'error' : ''}
-            />
-            {fieldErrors.confirmPassword && <div className="field-error">{fieldErrors.confirmPassword}</div>}
-          </div>
-
-          <div className="form-group">
-            <label>Account Type</label>
-            <div className="role-selection">
-              <label className="role-option">
-                <input
-                  type="radio"
-                  name="role"
-                  value="user"
-                  checked={formData.role === 'user'}
-                  onChange={handleChange}
-                />
-                <span className="role-label">User Account</span>
-                <small className="role-description">Book tables and manage bookings</small>
+            {/* Full Name Field */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
               </label>
-              <label className="role-option">
-                <input
-                  type="radio"
-                  name="role"
-                  value="admin"
-                  checked={formData.role === 'admin'}
-                  onChange={handleChange}
-                />
-                <span className="role-label">Admin Account</span>
-                <small className="role-description">Manage hotels, bookings, and users</small>
-              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${fieldErrors.name
+                  ? 'border-red-300 bg-red-50 focus:ring-red-500'
+                  : 'border-gray-300 hover:border-gray-400'
+                  }`}
+              />
+              {fieldErrors.name && (
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.name}</p>
+              )}
             </div>
-          </div>
 
-          <button
-            type="submit"
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Enter your email"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${fieldErrors.email
+                  ? 'border-red-300 bg-red-50 focus:ring-red-500'
+                  : 'border-gray-300 hover:border-gray-400'
+                  }`}
+              />
+              {fieldErrors.email && (
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.email}</p>
+              )}
+            </div>
 
-        <div className="auth-footer">
-          <p>
+            {/* Phone Field */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number <span className="text-gray-500 text-xs">(Optional)</span>
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter your phone number"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${phoneError
+                  ? 'border-red-300 bg-red-50 focus:ring-red-500'
+                  : 'border-gray-300 hover:border-gray-400'
+                  }`}
+              />
+              {phoneError && (
+                <p className="mt-2 text-sm text-red-600">{phoneError}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">
+                Leave empty if you don't want to provide a phone number
+              </p>
+            </div>
+
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Enter your password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${fieldErrors.password
+                  ? 'border-red-300 bg-red-50 focus:ring-red-500'
+                  : 'border-gray-300 hover:border-gray-400'
+                  }`}
+              />
+              {fieldErrors.password && (
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.password}</p>
+              )}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                placeholder="Confirm your password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${fieldErrors.confirmPassword
+                  ? 'border-red-300 bg-red-50 focus:ring-red-500'
+                  : 'border-gray-300 hover:border-gray-400'
+                  }`}
+              />
+              {fieldErrors.confirmPassword && (
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
+              )}
+            </div>
+
+            {/* Account Type Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Account Type
+              </label>
+              <div className="space-y-3">
+                <label className={`flex items-start p-4 border rounded-lg cursor-pointer transition-colors ${formData.role === 'user'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="user"
+                    checked={formData.role === 'user'}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-900">User Account</span>
+                    <span className="block text-xs text-gray-500">Book tables and manage bookings</span>
+                  </div>
+                </label>
+
+                <label className={`flex items-start p-4 border rounded-lg cursor-pointer transition-colors ${formData.role === 'admin'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="admin"
+                    checked={formData.role === 'admin'}
+                    onChange={handleChange}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-900">Admin Account</span>
+                    <span className="block text-xs text-gray-500">Manage hotels, bookings, and users</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating Account...
+                </div>
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="auth-link">
+            <Link
+              to="/login"
+              className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
               Sign in here
             </Link>
           </p>
         </div>
+        </div>
       </div>
-    </div>
-  );
+      );
 };
 
-export default Register;
+      export default Register;
