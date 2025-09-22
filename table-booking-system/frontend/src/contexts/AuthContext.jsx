@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
           const response = await axios.get(`${apiUrl}/api/auth/me`);
           setUser(response.data.user);
         } catch (error) {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       const response = await axios.post(`${apiUrl}/api/auth/login`, {
         email,
         password

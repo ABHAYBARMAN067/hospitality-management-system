@@ -1,41 +1,31 @@
 const multer = require('multer');
 const path = require('path');
 
-// Storage configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Make sure this directory exists
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Memory storage for Cloudinary upload
+const storage = multer.memoryStorage();
 
-// File filter
+// File filter - Accept any file type for flexibility
 const fileFilter = (req, file, cb) => {
-  // Accept images only
-  if (file.mimetype.startsWith('image/')) {
+  // Accept images and common file types
+  const allowedTypes = /jpeg|jpg|png|gif|webp|avif|bmp|svg|pdf|doc|docx|txt/;
+  const allowedMimes = /image\/|application\/|text\//;
+
+  if (allowedTypes.test(path.extname(file.originalname).toLowerCase()) ||
+      allowedMimes.test(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(new Error('File type not allowed!'), false);
   }
 };
 
-// Multer configuration
+// Multer configuration with improved limits
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit (increased from 5MB)
+    files: 10 // Allow up to 10 files
   },
   fileFilter: fileFilter
 });
-
-// Create uploads directory if it doesn't exist
-const fs = require('fs');
-const uploadsDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 module.exports = upload;

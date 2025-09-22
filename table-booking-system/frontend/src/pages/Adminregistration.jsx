@@ -16,9 +16,9 @@ const Adminregistration = () => {
     rentPerDay: '',
     hotelImage: null,
     topDishes: [
-      { name: '', image: null },
-      { name: '', image: null },
-      { name: '', image: null }
+      { name: '', image: null, description: '', category: 'Specials', price: '' },
+      { name: '', image: null, description: '', category: 'Specials', price: '' },
+      { name: '', image: null, description: '', category: 'Specials', price: '' }
     ]
   });
   const [loading, setLoading] = useState(false);
@@ -135,23 +135,41 @@ const Adminregistration = () => {
       formDataToSend.append('hotelZipCode', formData.hotelZipCode);
       // Trim hotelDescription to avoid empty string errors
       formDataToSend.append('hotelDescription', formData.hotelDescription.trim());
-      formDataToSend.append('rentPerDay', formData.rentPerDay);
+      // FIX: Convert rentPerDay to number for backend validation
+      formDataToSend.append('rentPerDay', parseFloat(formData.rentPerDay) || 0);
 
       if (formData.hotelImage) {
         formDataToSend.append('hotelImage', formData.hotelImage, formData.hotelImage.name);
       }
 
-      // Fix: send topDishes as array of objects with name only, images are sent separately
-      const topDishesArray = formData.topDishes.map(dish => ({
-        name: dish.name
-      }));
+      // Fix: send topDishes as array of objects with name and other properties
+      const topDishesArray = formData.topDishes
+        .filter(dish => dish.name && dish.name.trim()) // Only include dishes with names
+        .map(dish => ({
+          name: dish.name.trim(),
+          description: dish.description || `${dish.name} - Top dish`,
+          category: dish.category || 'Specials',
+          price: dish.price || '0'
+        }));
       formDataToSend.append('topDishes', JSON.stringify(topDishesArray));
 
+      // Send dish images with proper field names
       formData.topDishes.forEach((dish, index) => {
         if (dish.image) {
           formDataToSend.append(`dishImage${index}`, dish.image, dish.image.name);
         }
       });
+
+      // Also support sending multiple dish images in a single field
+      const dishImages = formData.topDishes
+        .map((dish, index) => dish.image)
+        .filter(Boolean);
+
+      if (dishImages.length > 0) {
+        dishImages.forEach((image, index) => {
+          formDataToSend.append('dishImage', image, image.name);
+        });
+      }
 
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/signup`, {
         method: 'POST',
@@ -277,7 +295,7 @@ const Adminregistration = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    placeholder="Enter your password"
+                    placeholder="Enter your password (min 6 characters)"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
                   {fieldErrors.password && (
@@ -398,7 +416,7 @@ const Adminregistration = () => {
                     value={formData.hotelDescription}
                     onChange={handleChange}
                     required
-                    placeholder="Enter hotel description"
+                    placeholder="Enter hotel description (minimum 10 characters)"
                     rows="3"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
@@ -418,7 +436,9 @@ const Adminregistration = () => {
                     value={formData.rentPerDay}
                     onChange={handleChange}
                     required
-                    placeholder="Enter rent per day"
+                    placeholder="Enter rent per day (e.g., 100)"
+                    min="0"
+                    step="0.01"
                     style={{ width: '100%', padding: '12px 16px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '16px' }}
                   />
                   {fieldErrors.rentPerDay && (
@@ -525,4 +545,3 @@ const Adminregistration = () => {
 };
 
 export default Adminregistration;
-

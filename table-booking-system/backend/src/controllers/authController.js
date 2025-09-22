@@ -15,12 +15,28 @@ const generateToken = (id) => {
 // Helper function to upload image to Cloudinary
 const uploadToCloudinary = async (file, folder) => {
   try {
-    const result = await cloudinary.uploader.upload(file, {
-      folder: folder,
-      resource_type: 'auto'
-    });
-    return result.secure_url;
+    console.log(`Uploading file to Cloudinary: ${file.originalname || 'unknown file'}`);
+
+    // Handle both file path and buffer
+    let uploadOptions = { folder: folder, resource_type: 'auto' };
+
+    if (file.path) {
+      // File was saved to disk
+      uploadOptions = { ...uploadOptions, ...{ path: file.path } };
+      const result = await cloudinary.uploader.upload(file.path, uploadOptions);
+      console.log(`Upload successful: ${result.secure_url}`);
+      return result.secure_url;
+    } else if (file.buffer) {
+      // File is in memory buffer - convert to data URI
+      const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+      const result = await cloudinary.uploader.upload(dataUri, uploadOptions);
+      console.log(`Upload successful: ${result.secure_url}`);
+      return result.secure_url;
+    } else {
+      throw new Error('No valid file path or buffer found');
+    }
   } catch (error) {
+    console.error(`Image upload failed:`, error);
     throw new Error(`Image upload failed: ${error.message}`);
   }
 };
@@ -49,12 +65,15 @@ const signup = async (req, res) => {
 
     const { name, email, password, phone, role, hotelName, hotelAddress, hotelCity, hotelState, hotelZipCode, hotelDescription, rentPerDay } = req.body;
 
-    // Parse topDishes JSON string to array without strict validation
+    // Parse topDishes with improved error handling
     let topDishesData = [];
     if (req.body.topDishes) {
       try {
-        // Try to parse JSON, but if fails, accept as empty array (relax validation)
-        topDishesData = JSON.parse(req.body.topDishes);
+        if (typeof req.body.topDishes === 'string') {
+          topDishesData = JSON.parse(req.body.topDishes);
+        } else if (Array.isArray(req.body.topDishes)) {
+          topDishesData = req.body.topDishes;
+        }
         if (!Array.isArray(topDishesData)) {
           topDishesData = [];
         }
@@ -89,7 +108,7 @@ const signup = async (req, res) => {
       // Upload hotel image if provided
       let hotelImageUrl = '';
       if (req.files && req.files.hotelImage) {
-        hotelImageUrl = await uploadToCloudinary(req.files.hotelImage[0].path, 'hotels');
+        hotelImageUrl = await uploadToCloudinary(req.files.hotelImage[0], 'hotels');
       }
 
       // Create user first
@@ -126,44 +145,68 @@ const signup = async (req, res) => {
         isActive: true
       });
 
-      // Create top dishes if provided
+      // Create top dishes if provided with improved error handling
       if (topDishesData && Array.isArray(topDishesData)) {
-        // Upload all dish images in order
+        console.log(`Creating ${topDishesData.length} top dishes for hotel: ${hotel.name}`);
+
+        // Collect all dish images from various field names
         const dishImageFiles = [];
         if (req.files) {
-          for (const key in req.files) {
-            if (key.startsWith('dishImage')) {
-              dishImageFiles.push(req.files[key][0]);
+          // Handle dishImage0, dishImage1, etc.
+          for (let i = 0; i < 6; i++) {
+            const fieldName = `dishImage${i}`;
+            if (req.files[fieldName]) {
+              dishImageFiles.push(req.files[fieldName][0]);
             }
           }
+          // Handle generic dishImage field (multiple files)
+          if (req.files.dishImage) {
+            dishImageFiles.push(...req.files.dishImage);
+          }
         }
+
+        console.log(`Found ${dishImageFiles.length} dish image files to upload`);
+
         for (let i = 0; i < topDishesData.length; i++) {
           const dish = topDishesData[i];
-          if (dish.name) {
+          if (dish.name && dish.name.trim()) {
             try {
               let dishImageUrl = '';
-              // Upload dish image from dishImageFiles in order
+              console.log(`Processing dish ${i + 1}: ${dish.name}`);
+
+              // Upload dish image if available
               if (dishImageFiles[i]) {
-                dishImageUrl = await uploadToCloudinary(dishImageFiles[i].path, 'dishes');
+                console.log(`Uploading image for dish: ${dish.name}`);
+                dishImageUrl = await uploadToCloudinary(dishImageFiles[i], 'dishes');
+                console.log(`Successfully uploaded image for ${dish.name}: ${dishImageUrl}`);
+              } else {
+                console.log(`No image file found for dish ${i + 1}: ${dish.name}`);
               }
 
               const menuItem = await MenuItem.create({
                 hotel: hotel._id,
-                name: dish.name,
-                description: `${dish.name} - Top dish`, // You might want to add description field
-                category: 'Specials', // Default category
-                price: 0, // You might want to add price field to form
+                name: dish.name.trim(),
+                description: dish.description || `${dish.name} - Top dish`,
+                category: dish.category || 'Specials',
+                price: parseFloat(dish.price) || 0,
                 image: dishImageUrl,
                 isAvailable: true,
-                isActive: true
+                isActive: true,
+                isTopDish: true
               });
+
               menuItems.push(menuItem);
+              console.log(`Successfully created menu item: ${dish.name}`);
             } catch (error) {
-              console.error('Error creating menu item:', error);
+              console.error(`Error creating menu item "${dish.name}":`, error);
               // Continue with other dishes even if one fails
             }
+          } else {
+            console.log(`Skipping dish ${i + 1} - no name provided`);
           }
         }
+      } else {
+        console.log('No top dishes data provided or invalid format');
       }
     } else {
       // Create regular user

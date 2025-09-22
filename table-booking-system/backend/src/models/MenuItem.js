@@ -70,6 +70,10 @@ const menuItemSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  isTopDish: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true,

@@ -244,24 +244,34 @@ const HotelDetails = () => {
 // Menu Section Component
 const MenuSection = ({ hotelId }) => {
   const [menuItems, setMenuItems] = useState([]);
+  const [topDishes, setTopDishes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/hotels/${hotelId}/menu`);
+        const [menuResponse, topDishesResponse] = await Promise.all([
+          axios.get(`http://localhost:5000/api/hotels/${hotelId}/menu`),
+          axios.get(`http://localhost:5000/api/hotels/${hotelId}/top-dishes`)
+        ]);
 
-        // Fix: Backend returns { success: true, data: menuItems }
-        // So we access response.data.data directly
-        if (response.data && response.data.success && response.data.data) {
-          setMenuItems(response.data.data);
+        if (menuResponse.data && menuResponse.data.success && menuResponse.data.data) {
+          setMenuItems(menuResponse.data.data);
         } else {
-          console.warn('Unexpected menu API response:', response.data);
+          console.warn('Unexpected menu API response:', menuResponse.data);
           setMenuItems([]);
         }
+
+        if (topDishesResponse.data && topDishesResponse.data.success && topDishesResponse.data.data) {
+          setTopDishes(topDishesResponse.data.data);
+        } else {
+          console.warn('Unexpected top dishes API response:', topDishesResponse.data);
+          setTopDishes([]);
+        }
       } catch (error) {
-        console.error('Error fetching menu:', error);
+        console.error('Error fetching menu or top dishes:', error);
         setMenuItems([]);
+        setTopDishes([]);
       } finally {
         setLoading(false);
       }
@@ -272,7 +282,7 @@ const MenuSection = ({ hotelId }) => {
 
   if (loading) return <div className="loading">Loading menu...</div>;
 
-  if (menuItems.length === 0) {
+  if (menuItems.length === 0 && topDishes.length === 0) {
     return <div className="no-data">No menu items available.</div>;
   }
 
@@ -280,6 +290,46 @@ const MenuSection = ({ hotelId }) => {
 
   return (
     <div className="space-y-8">
+      {topDishes.length > 0 && (
+        <div className="bg-yellow-50 rounded-lg p-4 sm:p-6 border border-yellow-300">
+          <h4 className="text-lg sm:text-xl font-bold text-yellow-900 mb-4 border-b border-yellow-300 pb-2">
+            Top Dishes
+          </h4>
+          <div className="space-y-4">
+            {topDishes.map(item => (
+              <div key={item._id || item.id} className="bg-white rounded-lg p-4 shadow-sm border border-yellow-200">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                  <div className="flex-1">
+                    <h5 className="text-base sm:text-lg font-semibold text-yellow-900 mb-2">{item.name}</h5>
+                    <p className="text-yellow-800 text-sm sm:text-base leading-relaxed mb-3">{item.description}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {item.isVegetarian && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          🟢 Veg
+                        </span>
+                      )}
+                      {item.isVegan && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          🌱 Vegan
+                        </span>
+                      )}
+                      {item.preparationTime && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          ⏱️ {item.preparationTime} min
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <span className="text-lg sm:text-xl font-bold text-yellow-900">₹{item.price}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {categories.map(category => (
         <div key={category} className="bg-gray-50 rounded-lg p-4 sm:p-6">
           <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2">

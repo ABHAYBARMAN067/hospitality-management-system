@@ -116,29 +116,22 @@ const profileValidation = [
     })
 ];
 
-// Middleware to parse JSON fields in multipart/form-data
-const parseJsonFields = (req, res, next) => {
-  if (req.body.topDishes) {
-    try {
-      req.body.topDishes = JSON.parse(req.body.topDishes);
-    } catch (err) {
-      return res.status(400).json({ success: false, message: 'Invalid JSON in topDishes field' });
-    }
-  }
-  next();
-};
+// Middleware to parse JSON fields in multipart/form-data - removed as we're handling this in the controller
 
 // Public routes
-// Use multer for file uploads in signup
+// Use multer for file uploads in signup with improved configuration
 router.post('/signup', upload.fields([
   { name: 'hotelImage', maxCount: 1 },
+  // Support dynamic dish image fields for better flexibility
   { name: 'dishImage0', maxCount: 1 },
   { name: 'dishImage1', maxCount: 1 },
   { name: 'dishImage2', maxCount: 1 },
   { name: 'dishImage3', maxCount: 1 },
   { name: 'dishImage4', maxCount: 1 },
-  { name: 'dishImage5', maxCount: 1 }
-]), parseJsonFields, signupValidation, signup);
+  { name: 'dishImage5', maxCount: 1 },
+  // Also support generic dishImage field for multiple files
+  { name: 'dishImage', maxCount: 6 }
+]), signupValidation, signup);
 
 router.post('/login', loginValidation, login);
 

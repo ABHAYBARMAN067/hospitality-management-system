@@ -11,6 +11,7 @@ const hotelRoutes = require('./routes/hotelRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const tableRoutes = require('./routes/tableRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const menuItemRoutes = require('./routes/menuItemRoutes');
 
 // Import middleware
 const { protect } = require('./middleware/auth');
@@ -83,6 +84,7 @@ app.use('/api/hotels', hotelRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/menu-items', menuItemRoutes);
 
 // Protected test endpoint
 app.get('/api/protected', protect, (req, res) => {
