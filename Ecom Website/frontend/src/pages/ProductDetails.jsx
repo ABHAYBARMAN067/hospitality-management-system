@@ -118,7 +118,7 @@ const ProductDetails = () => {
             <div className="bg-white rounded-2xl shadow-mobile overflow-hidden border border-gray-100">
               <div className="aspect-square">
                 <img
-                  src={product.images[selectedImage]}
+                  src={product.images[selectedImage]?.url || product.images[selectedImage]}
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -138,7 +138,7 @@ const ProductDetails = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={image?.url || image}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover hover:scale-105 transition-transform"
                     />

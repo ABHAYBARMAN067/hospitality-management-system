@@ -91,7 +91,7 @@ const Products = () => {
       <div className="relative">
         <Link to={`/product/${product._id}`}>
           <img
-            src={product.images[0] || '/placeholder-product.jpg'}
+            src={product.images[0]?.url || product.images[0] || '/placeholder-product.jpg'}
             alt={product.name}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
           />
