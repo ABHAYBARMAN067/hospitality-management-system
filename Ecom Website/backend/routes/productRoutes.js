@@ -1,6 +1,4 @@
-import express from 'express';
-import multer from 'multer';
-import path from 'path';
+ import express from 'express';
 import { body, param } from 'express-validator';
 import {
   getProducts,
@@ -13,31 +11,7 @@ import {
   getCategories
 } from '../controllers/productController.js';
 import { protect, authorize } from '../middlewares/auth.js';
-
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'backend/uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `product-${Date.now()}${path.extname(file.originalname)}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-    files: 5 // Maximum 5 files
-  },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed'), false);
-    }
-  }
-});
+import { uploadProductImages } from '../config/multer.js';
 
 const router = express.Router();
 
@@ -91,8 +65,8 @@ router.get('/:id/reviews', getProductReviews);
 router.post('/:id/reviews', protect, reviewValidation, addProductReview);
 
 // Admin only routes
-router.post('/', protect, authorize('admin'), upload.array('images', 5), productValidation, createProduct);
-router.put('/:id', protect, authorize('admin'), upload.array('images', 5), updateProduct);
+router.post('/', protect, authorize('admin'), uploadProductImages.array('images', 5), productValidation, createProduct);
+router.put('/:id', protect, authorize('admin'), uploadProductImages.array('images', 5), updateProduct);
 router.delete('/:id', protect, authorize('admin'), deleteProduct);
 
 export default router;

@@ -32,9 +32,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     sparse: true, // Only indexed for admin users
     unique: true,
-    required: function() {
-      return this.role === 'admin';
-    }
+    required: false // Made optional
   },
   avatar: {
     public_id: String,

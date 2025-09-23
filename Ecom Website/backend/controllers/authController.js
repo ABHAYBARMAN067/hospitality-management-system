@@ -35,15 +35,8 @@ export const signup = asyncHandler(async (req, res) => {
     });
   }
 
-  // If role is admin, check if adminId is provided and unique
-  if (role === 'admin') {
-    if (!adminId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Admin ID is required for admin users'
-      });
-    }
-
+  // Admin ID is now optional for admin users
+  if (role === 'admin' && adminId) {
     const existingAdminId = await User.findOne({ adminId });
     if (existingAdminId) {
       return res.status(400).json({

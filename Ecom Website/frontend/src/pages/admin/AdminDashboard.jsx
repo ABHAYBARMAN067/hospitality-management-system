@@ -63,7 +63,23 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post('/admin/products', formData);
+      // Create FormData for file uploads
+      const submitData = new FormData();
+
+      // Add all form fields to FormData
+      Object.keys(formData).forEach(key => {
+        if (key === 'images' && formData.images.length > 0) {
+          // Add each image file
+          formData.images.forEach((image, index) => {
+            submitData.append('images', image);
+          });
+        } else if (key !== 'images') {
+          // Add other fields
+          submitData.append(key, formData[key]);
+        }
+      });
+
+      const response = await api.post('/admin/products', submitData);
       alert('Product added successfully!');
       setShowModal(false);
       setFormData({
@@ -82,7 +98,8 @@ const AdminDashboard = () => {
       fetchDashboardData();
     } catch (error) {
       console.error('Error adding product:', error);
-      alert('Failed to add product.');
+      const errorMessage = error.response?.data?.message || 'Failed to add product. Please check all fields and try again.';
+      alert(errorMessage);
     }
   };
 
@@ -378,6 +395,33 @@ const AdminDashboard = () => {
                   <XMarkIcon className="h-6 w-6" />
                 </button>
               </div>
+{/* Images Upload */}
+<div className="mt-4">
+  <label className="block font-medium mb-2">Product Images</label>
+  <input
+    type="file"
+    accept="image/*"
+    multiple
+    onChange={(e) =>
+      setFormData(prev => ({ ...prev, images: Array.from(e.target.files) }))
+    }
+    className="w-full p-2 border border-gray-300 rounded"
+  />
+  {formData.images.length > 0 && (
+    <div className="mt-4 flex flex-wrap gap-4">
+      {formData.images.map((img, idx) => (
+        <div key={idx} className="flex flex-col items-center">
+          <p className="text-sm mb-1">Preview {idx + 1}</p>
+          <img
+            src={URL.createObjectURL(img)}
+            alt={`Preview ${idx + 1}`}
+            className="w-24 h-24 object-cover border rounded"
+          />
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -415,22 +459,99 @@ const AdminDashboard = () => {
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded"
                   />
-                  <input
-                    type="text"
+                  <select
                     name="category"
-                    placeholder="Category"
                     value={formData.category}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded"
-                  />
-                  <input
-                    type="text"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Books">Books</option>
+                    <option value="Home & Garden">Home & Garden</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Toys">Toys</option>
+                    <option value="Automotive">Automotive</option>
+                    <option value="Health">Health</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <select
                     name="subcategory"
-                    placeholder="Subcategory"
                     value={formData.subcategory}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded"
-                  />
+                  >
+                    <option value="">Select Subcategory (Optional)</option>
+                    {/* Electronics */}
+                    <option value="Smartphones">Smartphones</option>
+                    <option value="Laptops">Laptops</option>
+                    <option value="Tablets">Tablets</option>
+                    <option value="Headphones">Headphones</option>
+                    <option value="Cameras">Cameras</option>
+                    <option value="Gaming">Gaming</option>
+                    <option value="Accessories">Accessories</option>
+                    {/* Clothing */}
+                    <option value="Men's Clothing">Men's Clothing</option>
+                    <option value="Women's Clothing">Women's Clothing</option>
+                    <option value="Kids' Clothing">Kids' Clothing</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Bags">Bags</option>
+                    <option value="Accessories">Accessories</option>
+                    {/* Books */}
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Textbooks">Textbooks</option>
+                    <option value="Children's Books">Children's Books</option>
+                    <option value="Comics">Comics</option>
+                    <option value="Magazines">Magazines</option>
+                    {/* Home & Garden */}
+                    <option value="Furniture">Furniture</option>
+                    <option value="Decor">Decor</option>
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Bathroom">Bathroom</option>
+                    <option value="Garden">Garden</option>
+                    <option value="Tools">Tools</option>
+                    {/* Sports */}
+                    <option value="Fitness">Fitness</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Team Sports">Team Sports</option>
+                    <option value="Water Sports">Water Sports</option>
+                    <option value="Winter Sports">Winter Sports</option>
+                    <option value="Equipment">Equipment</option>
+                    {/* Beauty */}
+                    <option value="Skincare">Skincare</option>
+                    <option value="Makeup">Makeup</option>
+                    <option value="Hair Care">Hair Care</option>
+                    <option value="Fragrances">Fragrances</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Accessories">Accessories</option>
+                    {/* Toys */}
+                    <option value="Action Figures">Action Figures</option>
+                    <option value="Dolls">Dolls</option>
+                    <option value="Building Blocks">Building Blocks</option>
+                    <option value="Educational">Educational</option>
+                    <option value="Outdoor Toys">Outdoor Toys</option>
+                    <option value="Board Games">Board Games</option>
+                    {/* Automotive */}
+                    <option value="Car Parts">Car Parts</option>
+                    <option value="Motorcycle Parts">Motorcycle Parts</option>
+                    <option value="Tools">Tools</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Cleaning">Cleaning</option>
+                    {/* Health */}
+                    <option value="Vitamins">Vitamins</option>
+                    <option value="Supplements">Supplements</option>
+                    <option value="Personal Care">Personal Care</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Wellness">Wellness</option>
+                    {/* Other */}
+                    <option value="Other">Other</option>
+                  </select>
                   <input
                     type="number"
                     name="stock"
