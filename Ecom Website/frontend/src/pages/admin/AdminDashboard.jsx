@@ -32,6 +32,7 @@ const AdminDashboard = () => {
     subcategory: '',
     brand: '',
     stock: '',
+    sku: '',
     isActive: true,
     isFeatured: false,
     images: []
@@ -91,6 +92,7 @@ const AdminDashboard = () => {
         subcategory: '',
         brand: '',
         stock: '',
+        sku: '',
         isActive: true,
         isFeatured: false,
         images: []
@@ -560,6 +562,14 @@ const AdminDashboard = () => {
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded"
                     required
+                  />
+                  <input
+                    type="text"
+                    name="sku"
+                    placeholder="SKU (Optional - Auto-generated if empty)"
+                    value={formData.sku}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   <textarea
                     name="description"

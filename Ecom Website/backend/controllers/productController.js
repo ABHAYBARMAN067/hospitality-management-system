@@ -109,6 +109,27 @@ export const createProduct = asyncHandler(async (req, res) => {
   // Add user to req.body
   req.body.createdBy = req.user._id;
 
+  // Auto-generate SKU if not provided
+  if (!req.body.sku) {
+    let sku;
+    let isUnique = false;
+
+    // Keep generating SKUs until we find a unique one
+    while (!isUnique) {
+      // Generate a random SKU (e.g., PROD-XXXXXX where XXXXXX is 6 random alphanumeric characters)
+      const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+      sku = `PROD-${randomPart}`;
+
+      // Check if this SKU already exists
+      const existingProduct = await Product.findOne({ sku });
+      if (!existingProduct) {
+        isUnique = true;
+      }
+    }
+
+    req.body.sku = sku;
+  }
+
   // Handle image uploads
   if (req.files && req.files.length > 0) {
     const imageUrls = [];
