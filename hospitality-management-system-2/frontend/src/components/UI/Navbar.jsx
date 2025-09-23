@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUser, FaBars, FaTimes, FaSearch, FaBell, FaShoppingCart, FaHeart, FaQuestionCircle } from 'react-icons/fa';
 
 const Navbar = () => {
   const location = useLocation();
@@ -15,7 +15,13 @@ const Navbar = () => {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/restaurants', label: 'Restaurants' },
+    ...(user ? [
+      { path: '/bookings', label: 'Bookings' },
+      { path: '/orders', label: 'Orders' },
+      { path: '/reviews', label: 'Reviews' }
+    ] : []),
     ...(user?.role === 'admin' ? [{ path: '/admin', label: 'Admin' }] : []),
+    ...(user?.role === 'owner' ? [{ path: `/owner/${user.restaurantId}`, label: 'My Restaurant' }] : []),
   ];
 
   const toggleMobileMenu = () => {
@@ -42,7 +48,7 @@ const Navbar = () => {
               className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400"
               onClick={closeMobileMenu}
             >
-              🍽️ DineHub
+              🍽️ SpiceVilla
             </Link>
 
             {/* Desktop Navigation */}
@@ -72,8 +78,57 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-4">
               <ThemeToggle />
 
+              {/* Search Bar */}
+              <div className="relative hidden lg:block">
+                <input
+                  type="text"
+                  placeholder="Search restaurants..."
+                  className="w-64 px-4 py-2 pl-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
+                />
+                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              </div>
+
               {user ? (
                 <div className="flex items-center space-x-3">
+                  {/* Notifications */}
+                  <div className="relative">
+                    <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                      <FaBell className="w-5 h-5" />
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        3
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Cart/Orders */}
+                  <Link
+                    to="/orders"
+                    className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    <FaShoppingCart className="w-5 h-5" />
+                    <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      2
+                    </span>
+                  </Link>
+
+                  {/* Favorites */}
+                  <Link
+                    to="/favorites"
+                    className="p-2 text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                  >
+                    <FaHeart className="w-5 h-5" />
+                  </Link>
+
+                  {/* Help */}
+                  <Link
+                    to="/help"
+                    className="p-2 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                  >
+                    <FaQuestionCircle className="w-5 h-5" />
+                  </Link>
+
+                  <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+
                   <Link
                     to="/profile"
                     className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
@@ -175,6 +230,18 @@ const Navbar = () => {
 
                 {/* Mobile Navigation Links */}
                 <div className="flex-1 py-4">
+                  {/* Mobile Search */}
+                  <div className="px-4 mb-4">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search restaurants..."
+                        className="w-full px-4 py-2 pl-10 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
+                      />
+                      <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    </div>
+                  </div>
+
                   <nav className="space-y-2 px-4">
                     {navItems.map((item) => (
                       <Link
@@ -190,6 +257,40 @@ const Navbar = () => {
                         {item.label}
                       </Link>
                     ))}
+
+                    {/* Mobile Quick Actions */}
+                    {user && (
+                      <>
+                        <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>
+                        <Link
+                          to="/orders"
+                          onClick={closeMobileMenu}
+                          className="flex items-center px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        >
+                          <FaShoppingCart className="w-5 h-5 mr-3" />
+                          Orders
+                          <span className="ml-auto bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            2
+                          </span>
+                        </Link>
+                        <Link
+                          to="/favorites"
+                          onClick={closeMobileMenu}
+                          className="flex items-center px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                        >
+                          <FaHeart className="w-5 h-5 mr-3" />
+                          Favorites
+                        </Link>
+                        <Link
+                          to="/help"
+                          onClick={closeMobileMenu}
+                          className="flex items-center px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        >
+                          <FaQuestionCircle className="w-5 h-5 mr-3" />
+                          Help & Support
+                        </Link>
+                      </>
+                    )}
                   </nav>
                 </div>
 

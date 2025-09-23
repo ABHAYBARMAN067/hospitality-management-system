@@ -8,7 +8,7 @@ const restaurantSchema = new mongoose.Schema({
   cuisineType: { type: String, required: true },
   location: { type: String, required: true },
   averageRating: { type: Number, default: 0 },
-  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   menu: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' }],
   createdAt: { type: Date, default: Date.now }
 });

@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingSpinner from './UI/LoadingSpinner';
-import { FaCalendarAlt, FaShoppingCart, FaPlus, FaCheck, FaTimes, FaClock, FaUsers, FaDollarSign } from 'react-icons/fa';
+import MenuManagement from './MenuManagement';
+import Reports from './Reports';
+import { FaCalendarAlt, FaShoppingCart, FaPlus, FaCheck, FaTimes, FaClock, FaUsers, FaDollarSign, FaUtensils, FaChartBar } from 'react-icons/fa';
 
 function Admin() {
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [newRestaurant, setNewRestaurant] = useState({
     name: '',
@@ -16,7 +19,7 @@ function Admin() {
     contact: '',
     cuisineType: '',
     location: '',
-    ownerId: ''
+    images: []
   });
 
   useEffect(() => {
@@ -64,6 +67,8 @@ function Admin() {
     }
   };
 
+
+
   const handleBookingUpdate = async (id, status) => {
     try {
       await axios.put(`http://localhost:5000/api/bookings/${id}`, { status });
@@ -89,10 +94,22 @@ function Admin() {
   const handleRestaurantCreate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/admin/restaurants', newRestaurant);
+      const formData = new FormData();
+      Object.keys(newRestaurant).forEach(key => {
+        if (key === 'images') {
+          newRestaurant.images.forEach(file => formData.append('images', file));
+        } else {
+          formData.append(key, newRestaurant[key]);
+        }
+      });
+      await axios.post('http://localhost:5000/api/admin/restaurants', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       toast.success('Restaurant created successfully!');
       fetchRestaurants();
-      setNewRestaurant({ name: '', address: '', contact: '', cuisineType: '', location: '', ownerId: '' });
+      setNewRestaurant({ name: '', address: '', contact: '', cuisineType: '', location: '', images: [] });
     } catch (error) {
       console.error('Error creating restaurant:', error);
       toast.error('Failed to create restaurant');
@@ -318,13 +335,15 @@ function Admin() {
             className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             required
           />
+
+
+
           <input
-            type="text"
-            placeholder="Owner ID"
-            value={newRestaurant.ownerId}
-            onChange={(e) => setNewRestaurant({ ...newRestaurant, ownerId: e.target.value })}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => setNewRestaurant({ ...newRestaurant, images: Array.from(e.target.files) })}
             className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            required
           />
 
           <div className="md:col-span-2">
