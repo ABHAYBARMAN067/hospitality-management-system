@@ -24,10 +24,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Import multer for multipart/form-data parsing
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Temporary storage for non-Cloudinary uploads
-app.use(upload.any()); // Parse all multipart data
+// Note: Removed global multer middleware to avoid conflicts with specific upload middlewares
+// Each route that needs file upload will use its own specific middleware
 
 // Rate limiting
 app.use('/api/', apiLimiter);

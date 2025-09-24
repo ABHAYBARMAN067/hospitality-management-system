@@ -50,10 +50,28 @@ router.post('/restaurants', uploadMultiple, async (req, res) => {
       });
     }
 
+    // Validate field lengths
+    if (name.length > 100) {
+      return res.status(400).json({ error: 'Restaurant name must be less than 100 characters' });
+    }
+    if (address.length > 200) {
+      return res.status(400).json({ error: 'Address must be less than 200 characters' });
+    }
+    if (contact.length > 20) {
+      return res.status(400).json({ error: 'Contact must be less than 20 characters' });
+    }
+    if (cuisineType.length > 50) {
+      return res.status(400).json({ error: 'Cuisine type must be less than 50 characters' });
+    }
+    if (location.length > 100) {
+      return res.status(400).json({ error: 'Location must be less than 100 characters' });
+    }
+
     // Get uploaded image URLs from Cloudinary
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
       imageUrls = req.files.map(file => file.path);
+      console.log(`Uploaded ${req.files.length} images for restaurant: ${name}`);
     }
 
     const restaurant = new Restaurant({
@@ -67,10 +85,28 @@ router.post('/restaurants', uploadMultiple, async (req, res) => {
     });
 
     await restaurant.save();
+    console.log(`Restaurant created successfully: ${name} (ID: ${restaurant._id})`);
     res.status(201).json(restaurant);
   } catch (error) {
     console.error('Error creating restaurant:', error);
-    res.status(500).json({ error: error.message });
+
+    // Handle specific error types
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: Object.values(error.errors).map(err => err.message)
+      });
+    }
+
+    if (error.message.includes('Cloudinary')) {
+      return res.status(500).json({
+        error: 'Image upload failed. Please check your Cloudinary configuration.'
+      });
+    }
+
+    res.status(500).json({
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message
+    });
   }
 });
 

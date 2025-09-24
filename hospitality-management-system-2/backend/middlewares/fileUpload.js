@@ -2,15 +2,29 @@ const cloudinary = require('../config/cloudinary');
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Configure multer storage for Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'restaurants',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
-    transformation: [{ width: 800, height: 600, crop: 'limit' }]
-  }
-});
+// Configure multer storage for Cloudinary (only if configured)
+let storage;
+if (cloudinary.isConfigured) {
+  storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'restaurants',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'avif'],
+      transformation: [{ width: 800, height: 600, crop: 'limit' }]
+    }
+  });
+} else {
+  // Fallback to local storage if Cloudinary is not configured
+  const path = require('path');
+  storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + path.extname(file.originalname));
+    }
+  });
+}
 
 // File filter
 const fileFilter = (req, file, cb) => {

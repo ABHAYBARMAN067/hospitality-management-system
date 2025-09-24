@@ -4,7 +4,7 @@ const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
   address: { type: String, required: true },
   contact: { type: String, required: true },
-  images: [{ type: String }], // Cloudinary URLs
+  images: [{ type: String }], 
   cuisineType: { type: String, required: true },
   location: { type: String, required: true },
   averageRating: { type: Number, default: 0 },
