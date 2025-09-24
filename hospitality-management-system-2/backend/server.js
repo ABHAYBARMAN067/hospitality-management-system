@@ -24,9 +24,6 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Note: Removed global multer middleware to avoid conflicts with specific upload middlewares
-// Each route that needs file upload will use its own specific middleware
-
 // Rate limiting
 app.use('/api/', apiLimiter);
 app.use('/api/auth/', authLimiter);
@@ -37,8 +34,8 @@ mongoose.connect(config.mongodbUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log('MongoDB connection error:', err));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -55,31 +52,40 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
   customCss: '.swagger-ui .topbar { display: none }'
 }));
 
-// Routes with caching where appropriate
-app.use('/api/auth', require('./controllers/authController'));
-app.use('/api/users', require('./controllers/userController'));
+// Routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const restaurantRoutes = require('./routes/restaurant');
+const bookingRoutes = require('./routes/booking');
+const orderRoutes = require('./routes/order');
+const adminRoutes = require('./routes/admin');
+const menuRoutes = require('./routes/menu');
+const reviewRoutes = require('./routes/review');
+const reportsRoutes = require('./routes/reports');
 
-// Restaurant routes with optional caching
-const restaurantController = require('./controllers/restaurantController');
-const restaurantCacheMiddleware = cache.middleware ? cache.middleware((req) => `restaurants:${JSON.stringify(req.query)}`) : (req, res, next) => next();
-app.use('/api/restaurants', restaurantCacheMiddleware, restaurantController);
-
-app.use('/api/bookings', require('./controllers/bookingController'));
-app.use('/api/orders', require('./controllers/orderController'));
-app.use('/api/admin', require('./controllers/adminController'));
-app.use('/api/menu', require('./controllers/menuController'));
-app.use('/api/ratings', require('./controllers/reviewController'));
-app.use('/api/reports', require('./controllers/reportsController'));
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/menu', menuRoutes);
+app.use('/api/ratings', reviewRoutes);
+app.use('/api/reports', reportsRoutes);
 
 // File upload error handling
 app.use('/api/upload', handleUploadError);
 
 // Cache management endpoints (for admin use)
-app.post('/api/cache/clear', (req, res) => {
+app.post('/api/cache/clear', async (req, res) => {
   if (cache.clearPattern) {
-    cache.clearPattern('*')
-      .then(() => res.json({ message: 'Cache cleared successfully' }))
-      .catch(err => res.status(500).json({ error: 'Failed to clear cache' }));
+    try {
+      await cache.clearPattern('*');
+      res.json({ message: 'Cache cleared successfully' });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to clear cache' });
+    }
   } else {
     res.status(503).json({ error: 'Cache service not available' });
   }
@@ -98,9 +104,12 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
+// Start server
 const PORT = config.port || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
   console.log(`Health check available at http://localhost:${PORT}/health`);
 });
+
+

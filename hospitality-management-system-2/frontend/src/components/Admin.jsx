@@ -95,23 +95,34 @@ function Admin() {
     e.preventDefault();
     try {
       const formData = new FormData();
-      Object.keys(newRestaurant).forEach(key => {
-        if (key === 'images') {
-          newRestaurant.images.forEach(file => formData.append('images', file));
-        } else {
-          formData.append(key, newRestaurant[key]);
-        }
+
+      formData.append('name', newRestaurant.name);
+      formData.append('address', newRestaurant.address);
+      formData.append('contact', newRestaurant.contact);
+      formData.append('cuisineType', newRestaurant.cuisineType);
+      formData.append('location', newRestaurant.location); // <-- simple string
+
+      newRestaurant.images.forEach((file) => {
+        formData.append('images', file);
       });
+
       await axios.post('http://localhost:5000/api/admin/restaurants', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
+
       toast.success('Restaurant created successfully!');
       fetchRestaurants();
-      setNewRestaurant({ name: '', address: '', contact: '', cuisineType: '', location: '', images: [] });
-    } catch (error) {
-      console.error('Error creating restaurant:', error);
+
+      setNewRestaurant({
+        name: '',
+        address: '',
+        contact: '',
+        cuisineType: '',
+        location: '', // reset
+        images: []
+      });
+    } catch (err) {
+      console.error('Error creating restaurant:', err);
       toast.error('Failed to create restaurant');
     }
   };
@@ -327,14 +338,14 @@ function Admin() {
             className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             required
           />
-          <input
-            type="text"
-            placeholder="Location"
-            value={newRestaurant.location}
-            onChange={(e) => setNewRestaurant({ ...newRestaurant, location: e.target.value })}
-            className="p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            required
-          />
+        <input
+  type="text"
+  placeholder="Location (e.g., Jabalpur)"
+  value={newRestaurant.location}
+  onChange={(e) => setNewRestaurant({ ...newRestaurant, location: e.target.value })}
+  required
+/>
+
 
 
 
