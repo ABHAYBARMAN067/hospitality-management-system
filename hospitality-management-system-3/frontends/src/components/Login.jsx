@@ -1,6 +1,6 @@
 // src/components/Login.jsx
 import React, { useState, useContext } from 'react';
-import api from '../api/api'; // Axios instance with baseURL set
+import api from '../api/api';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 

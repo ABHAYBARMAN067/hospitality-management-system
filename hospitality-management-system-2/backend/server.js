@@ -30,10 +30,7 @@ app.use('/api/auth/', authLimiter);
 app.use('/api/upload/', uploadLimiter);
 
 // MongoDB Connection
-mongoose.connect(config.mongodbUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(config.mongodbUri)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
@@ -54,25 +51,17 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
 
 // Routes
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
 const restaurantRoutes = require('./routes/restaurant');
 const bookingRoutes = require('./routes/booking');
 const orderRoutes = require('./routes/order');
 const adminRoutes = require('./routes/admin');
-const menuRoutes = require('./routes/menu');
-const reviewRoutes = require('./routes/review');
-const reportsRoutes = require('./routes/reports');
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/menu', menuRoutes);
-app.use('/api/ratings', reviewRoutes);
-app.use('/api/reports', reportsRoutes);
 
 // File upload error handling
 app.use('/api/upload', handleUploadError);
