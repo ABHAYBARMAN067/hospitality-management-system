@@ -211,7 +211,7 @@ hospitality-management-system/
 
 - **Astha** – Frontend Development
 - **Abhay** – Backend Development
-- **Anmol** – Database Management
+- **Anmol** – Database Create
 
 ## License
 
