@@ -205,13 +205,12 @@ hospitality-management-system/
 ### Admin
 - Additional admin-specific endpoints for managing restaurants and bookings.
 
-
-
 ## Contributors
 
-- **Astha** – Frontend Development
-- **Abhay** – Backend Development
-- **Anmol** – Database Create
+- **Astha** – Frontend Development  
+- **Abhay** – Backend Development  
+- **Anmol** – Database Creation
+
 
 ## License
 
