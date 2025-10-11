@@ -6,6 +6,7 @@ const MenuItemSchema = new mongoose.Schema({
     description: String,
     price: { type: Number, required: true },
     image: String, // Cloudinary URL
+    isTop: { type: Boolean, default: false },
 });
 
 export default mongoose.model('MenuItem', MenuItemSchema);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, MapPinIcon, StarIcon } from '@heroicons/react/24/solid';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import toast from 'react-hot-toast';
@@ -8,6 +9,7 @@ import SkeletonLoader from './UI/SkeletonLoader';
 import api from '../api/api';
 
 const Home = () => {
+    const navigate = useNavigate();
     const [restaurants, setRestaurants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -129,7 +131,8 @@ const Home = () => {
                                 key={hotel._id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                                onClick={() => navigate(`/hotels/${hotel._id}`)}
                             >
                                 <div className="aspect-w-16 aspect-h-9">
                                     <img

@@ -1,4 +1,5 @@
 import Restaurant from '../models/Restaurant.js';
+import MenuItem from '../models/MenuItem.js';
 
 export const getAllRestaurants = async (req, res) => {
     try {
@@ -13,7 +14,14 @@ export const getRestaurantById = async (req, res) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) return res.status(404).json({ error: 'Not found' });
-        res.json(restaurant);
+
+        // Fetch top menu items
+        const topMenuItems = await MenuItem.find({ restaurantId: restaurant._id, isTop: true }).limit(4);
+
+        res.json({
+            ...restaurant.toObject(),
+            topMenuItems
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

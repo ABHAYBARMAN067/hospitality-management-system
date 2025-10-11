@@ -1,14 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import api from '../api/api.js';
 
 const MenuManagement = () => {
     const [showAddModal, setShowAddModal] = useState(false);
+    const [menuItems, setMenuItems] = useState([]);
+    const [restaurant, setRestaurant] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Example menu items - replace with actual data
-    const menuItems = [
-        { id: 1, name: 'Paneer Tikka', price: 250, image: 'https://via.placeholder.com/40' },
-        { id: 2, name: 'Butter Chicken', price: 350, image: 'https://via.placeholder.com/40' },
-    ];
+    useEffect(() => {
+        fetchRestaurantAndMenu();
+    }, []);
+
+    const fetchRestaurantAndMenu = async () => {
+        try {
+            const res = await api.get('/admin/my-restaurants');
+            if (res.data.length > 0) {
+                const rest = res.data[0];
+                setRestaurant(rest);
+                const menuRes = await api.get(`/menu/restaurant/${rest._id}`);
+                setMenuItems(menuRes.data);
+            }
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleTopDish = async (itemId, isTop) => {
+        try {
+            await api.patch(`/menu/${itemId}`, { isTop });
+            setMenuItems(items => items.map(item => item._id === itemId ? { ...item, isTop } : item));
+        } catch (err) {
+            console.error('Error updating top dish:', err);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -48,6 +75,9 @@ const MenuManagement = () => {
                                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                                                 Price
                                             </th>
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                                Top Dish
+                                            </th>
                                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                                 <span className="sr-only">Actions</span>
                                             </th>
@@ -55,15 +85,23 @@ const MenuManagement = () => {
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
                                         {menuItems.map((item) => (
-                                            <tr key={item.id}>
+                                            <tr key={item._id}>
                                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
-                                                    <img src={item.image} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
+                                                    <img src={item.image || 'https://via.placeholder.com/40'} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
                                                     {item.name}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
                                                     ₹{item.price}
+                                                </td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={item.isTop || false}
+                                                        onChange={(e) => toggleTopDish(item._id, e.target.checked)}
+                                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                                    />
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <button

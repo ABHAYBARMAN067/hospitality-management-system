@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import Restaurant from './components/Restaurant';
+import HotelsDetail from './components/HotelsDetail';
 import Login from './components/Login';
 import Register from './components/Register';
 import AdminDashboard from './components/AdminDashboard';
@@ -22,6 +23,7 @@ const App = () => (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/restaurant/:id" element={<Restaurant />} />
+      <Route path="/hotels/:id" element={<HotelsDetail />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/about" element={<About />} />
