@@ -95,12 +95,12 @@ const MenuManagement = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+        <div className="min-h-screen bg-primary-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="sm:flex sm:items-center">
                     <div className="sm:flex-auto">
-                        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Menu Management</h1>
-                        <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                        <h1 className="text-2xl font-semibold text-primary-900">Menu Management</h1>
+                        <p className="mt-2 text-sm text-primary-700">
                             Manage your restaurant's menu items, prices, and availability.
                         </p>
                     </div>
@@ -108,7 +108,7 @@ const MenuManagement = () => {
                         <button
                             type="button"
                             onClick={() => setShowAddModal(true)}
-                            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+                            className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:w-auto"
                         >
                             <PlusIcon className="h-5 w-5 mr-2" />
                             Add Dish
@@ -120,19 +120,19 @@ const MenuManagement = () => {
                     <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                                <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                                    <thead className="bg-gray-50 dark:bg-gray-800">
+                                <table className="min-w-full divide-y divide-primary-300">
+                                    <thead className="bg-primary-50">
                                         <tr>
-                                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6">
+                                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-primary-900 sm:pl-6">
                                                 Image
                                             </th>
-                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-primary-900">
                                                 Name
                                             </th>
-                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-primary-900">
                                                 Price
                                             </th>
-                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-primary-900">
                                                 Top Dish
                                             </th>
                                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -140,34 +140,34 @@ const MenuManagement = () => {
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+                                    <tbody className="divide-y divide-primary-200 bg-primary-100">
                                         {menuItems.map((item) => (
                                             <tr key={item._id}>
                                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
                                                     <img src={item.image || 'https://via.placeholder.com/40'} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
                                                 </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary-900">
                                                     {item.name}
                                                 </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary-900">
                                                     ₹{item.price}
                                                 </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary-900">
                                                     <input
                                                         type="checkbox"
                                                         checked={item.isTop || false}
                                                         onChange={(e) => toggleTopDish(item._id, e.target.checked)}
-                                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
                                                     />
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <button
-                                                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4"
+                                                        className="text-primary-600 hover:text-primary-900 mr-4"
                                                     >
                                                         <PencilIcon className="h-5 w-5" />
                                                     </button>
                                                     <button
-                                                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                        className="text-red-600 hover:text-red-900"
                                                     >
                                                         <TrashIcon className="h-5 w-5" />
                                                     </button>
@@ -184,38 +184,38 @@ const MenuManagement = () => {
 
             {showAddModal && (
                 <div
-                    className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                    className="fixed inset-0 bg-primary-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
                     onClick={() => setShowAddModal(false)}
                 >
                     <div
-                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-primary-100"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Dish</h3>
+                        <h3 className="text-lg font-medium leading-6 text-primary-900 mb-4">Add New Dish</h3>
                         <form onSubmit={handleAddSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Dish Name *</label>
+                                <label className="block text-sm font-medium text-primary-700 mb-1">Dish Name *</label>
                                 <input
                                     type="text"
                                     name="name"
                                     value={newItem.name}
                                     onChange={handleNewItemChange}
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <label className="block text-sm font-medium text-primary-700 mb-1">Description</label>
                                 <textarea
                                     name="description"
                                     value={newItem.description}
                                     onChange={handleNewItemChange}
                                     rows="3"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹) *</label>
+                                <label className="block text-sm font-medium text-primary-700 mb-1">Price (₹) *</label>
                                 <input
                                     type="number"
                                     name="price"
@@ -224,17 +224,17 @@ const MenuManagement = () => {
                                     min="0"
                                     step="0.01"
                                     required
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                <label className="block text-sm font-medium text-primary-700 mb-1">Image</label>
                                 <input
                                     type="file"
                                     name="image"
                                     onChange={handleNewItemChange}
                                     accept="image/*"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                             </div>
                             <div className="flex items-center">
@@ -243,21 +243,21 @@ const MenuManagement = () => {
                                     name="isTop"
                                     checked={newItem.isTop}
                                     onChange={handleNewItemChange}
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
                                 />
-                                <label className="ml-2 text-sm text-gray-700">Featured Top Dish</label>
+                                <label className="ml-2 text-sm text-primary-700">Featured Top Dish</label>
                             </div>
                             <div className="flex space-x-3 pt-4">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
                                 >
                                     Add Dish
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    className="flex-1 bg-primary-100 text-primary-700 py-2 px-4 rounded-md hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                                 >
                                     Cancel
                                 </button>
@@ -273,38 +273,38 @@ const MenuManagement = () => {
     {
         showAddModal && (
             <div
-                className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                className="fixed inset-0 bg-primary-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
                 onClick={() => setShowAddModal(false)}
             >
                 <div
-                    className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+                    className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-primary-100"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Dish</h3>
+                    <h3 className="text-lg font-medium leading-6 text-primary-900 mb-4">Add New Dish</h3>
                     <form onSubmit={handleAddSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Dish Name *</label>
+                            <label className="block text-sm font-medium text-primary-700 mb-1">Dish Name *</label>
                             <input
                                 type="text"
                                 name="name"
                                 value={newItem.name}
                                 onChange={handleNewItemChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <label className="block text-sm font-medium text-primary-700 mb-1">Description</label>
                             <textarea
                                 name="description"
                                 value={newItem.description}
                                 onChange={handleNewItemChange}
                                 rows="3"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹) *</label>
+                            <label className="block text-sm font-medium text-primary-700 mb-1">Price (₹) *</label>
                             <input
                                 type="number"
                                 name="price"
@@ -313,17 +313,17 @@ const MenuManagement = () => {
                                 min="0"
                                 step="0.01"
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                            <label className="block text-sm font-medium text-primary-700 mb-1">Image</label>
                             <input
                                 type="file"
                                 name="image"
                                 onChange={handleNewItemChange}
                                 accept="image/*"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                             />
                         </div>
                         <div className="flex items-center">
@@ -332,21 +332,21 @@ const MenuManagement = () => {
                                 name="isTop"
                                 checked={newItem.isTop}
                                 onChange={handleNewItemChange}
-                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
                             />
-                            <label className="ml-2 text-sm text-gray-700">Featured Top Dish</label>
+                            <label className="ml-2 text-sm text-primary-700">Featured Top Dish</label>
                         </div>
                         <div className="flex space-x-3 pt-4">
                             <button
                                 type="submit"
-                                className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
                             >
                                 Add Dish
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowAddModal(false)}
-                                className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="flex-1 bg-primary-100 text-primary-700 py-2 px-4 rounded-md hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                             >
                                 Cancel
                             </button>

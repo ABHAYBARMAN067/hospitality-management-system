@@ -23,7 +23,7 @@ const Restaurant = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center items-center">
+            <div className="min-h-screen bg-primary-50 flex justify-center items-center">
                 <LoadingSpinner size="large" />
             </div>
         );
@@ -31,17 +31,17 @@ const Restaurant = () => {
 
     if (!restaurant) {
         return (
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center items-center">
+            <div className="min-h-screen bg-primary-50 flex justify-center items-center">
                 <div className="text-center">
-                    <h3 className="mt-2 text-xl font-medium text-gray-900 dark:text-white">Restaurant not found</h3>
-                    <p className="mt-1 text-gray-500 dark:text-gray-400">The restaurant you're looking for doesn't exist.</p>
+                    <h3 className="mt-2 text-xl font-medium text-primary-900">Restaurant not found</h3>
+                    <p className="mt-1 text-primary-500">The restaurant you're looking for doesn't exist.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-primary-50">
             <Navbar />
 
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -75,40 +75,40 @@ const Restaurant = () => {
                 <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
                     {/* Details Section */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Restaurant Details</h2>
+                        <div className="bg-primary-100 shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Restaurant Details</h2>
                             <div className="space-y-4">
                                 <div className="flex items-start">
-                                    <MapPinIcon className="h-6 w-6 text-gray-400 mt-1" />
+                                    <MapPinIcon className="h-6 w-6 text-primary-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Location</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{restaurant.address}</p>
+                                        <h3 className="text-sm font-medium text-primary-900">Location</h3>
+                                        <p className="text-sm text-primary-500">{restaurant.address}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
-                                    <PhoneIcon className="h-6 w-6 text-gray-400 mt-1" />
+                                    <PhoneIcon className="h-6 w-6 text-primary-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Contact</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{restaurant.contact}</p>
+                                        <h3 className="text-sm font-medium text-primary-900">Contact</h3>
+                                        <p className="text-sm text-primary-500">{restaurant.contact}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
-                                    <ClockIcon className="h-6 w-6 text-gray-400 mt-1" />
+                                    <ClockIcon className="h-6 w-6 text-primary-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Hours</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">11:00 AM - 10:00 PM</p>
+                                        <h3 className="text-sm font-medium text-primary-900">Hours</h3>
+                                        <p className="text-sm text-primary-500">11:00 AM - 10:00 PM</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Menu Preview Section */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Popular Dishes</h2>
+                        <div className="bg-primary-100 shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Popular Dishes</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {/* Example menu items - replace with actual data */}
                                 {[1, 2, 3, 4].map((item) => (
-                                    <div key={item} className="flex items-center space-x-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                                    <div key={item} className="flex items-center space-x-4 p-4 rounded-lg bg-primary-50">
                                         <div className="h-16 w-16 rounded-lg overflow-hidden">
                                             <img
                                                 src={`https://source.unsplash.com/featured/100x100?food-${item}`}
@@ -117,8 +117,8 @@ const Restaurant = () => {
                                             />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dish Name</h3>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">₹299</p>
+                                            <h3 className="text-sm font-medium text-primary-900">Dish Name</h3>
+                                            <p className="text-sm text-primary-500">₹299</p>
                                         </div>
                                     </div>
                                 ))}
@@ -128,28 +128,28 @@ const Restaurant = () => {
 
                     {/* Booking Section */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 sticky top-8">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Make a Reservation</h2>
+                        <div className="bg-primary-100 shadow rounded-lg p-6 sticky top-8">
+                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Make a Reservation</h2>
                             <form className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    <label className="block text-sm font-medium text-primary-700 mb-1">
                                         Date
                                     </label>
                                     <input
                                         type="date"
                                         value={selectedDate}
                                         onChange={(e) => setSelectedDate(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                        className="w-full px-3 py-2 border border-primary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-primary-100 text-primary-900 sm:text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    <label className="block text-sm font-medium text-primary-700 mb-1">
                                         Time
                                     </label>
                                     <select
                                         value={selectedTime}
                                         onChange={(e) => setSelectedTime(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                        className="w-full px-3 py-2 border border-primary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-primary-100 text-primary-900 sm:text-sm"
                                     >
                                         <option value="">Select time</option>
                                         <option value="12:00">12:00 PM</option>
@@ -159,13 +159,13 @@ const Restaurant = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    <label className="block text-sm font-medium text-primary-700 mb-1">
                                         Number of Guests
                                     </label>
                                     <select
                                         value={guestCount}
                                         onChange={(e) => setGuestCount(Number(e.target.value))}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                        className="w-full px-3 py-2 border border-primary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-primary-100 text-primary-900 sm:text-sm"
                                     >
                                         {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                                             <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
@@ -174,7 +174,7 @@ const Restaurant = () => {
                                 </div>
                                 <button
                                     type="submit"
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
                                     Reserve Table
                                 </button>

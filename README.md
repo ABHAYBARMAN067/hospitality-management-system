@@ -168,7 +168,7 @@ hospitality-management-system/
 │   ├── tailwind.config.js
 │   └── vite.config.js
 ├── README.md
-└── TODO.md
+
 ```
 
 ## API Endpoints
