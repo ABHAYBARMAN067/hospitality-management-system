@@ -1,15 +1,41 @@
 import React, { useState } from 'react';
 import { StarIcon } from '@heroicons/react/24/solid';
+import api from '../api/api.js';
 
-const ReviewForm = () => {
+const ReviewForm = ({ restaurantId, onReviewSubmitted }) => {
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState('');
     const [hoverRating, setHoverRating] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle review submission
-        console.log({ rating, review });
+        if (rating === 0) {
+            setError('Please select a rating');
+            return;
+        }
+        if (!review.trim()) {
+            setError('Please write a review');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            await api.post(`/reviews/${restaurantId}`, {
+                rating,
+                comment: review
+            });
+            setRating(0);
+            setReview('');
+            onReviewSubmitted();
+        } catch (err) {
+            setError(err.response?.data?.error || 'Failed to submit review');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -63,11 +89,13 @@ const ReviewForm = () => {
 
                 {/* Submit Button */}
                 <div className="flex justify-end">
+                    {error && <p className="text-red-500 text-sm mr-4">{error}</p>}
                     <button
                         type="submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                        disabled={loading}
+                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200 disabled:opacity-50"
                     >
-                        Submit Review
+                        {loading ? 'Submitting...' : 'Submit Review'}
                     </button>
                 </div>
             </form>

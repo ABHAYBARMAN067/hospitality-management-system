@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { StarIcon, MapPinIcon, PhoneIcon, EnvelopeIcon, ClockIcon } from '@heroicons/react/24/solid';
 import Navbar from './UI/Navbar';
 import LoadingSpinner from './UI/LoadingSpinner';
+import ReviewForm from './ReviewForm';
 import api from '../api/api.js';
 import { AuthContext } from '../context/AuthContext';
 
@@ -18,9 +19,11 @@ const HotelsDetail = () => {
     const [bookingLoading, setBookingLoading] = useState(false);
     const [bookingError, setBookingError] = useState('');
     const [bookingSuccess, setBookingSuccess] = useState(null); // will hold booking object
+    const [reviews, setReviews] = useState([]);
 
     useEffect(() => {
         fetchRestaurant();
+        fetchReviews();
     }, [id]);
 
     const fetchRestaurant = async () => {
@@ -31,6 +34,15 @@ const HotelsDetail = () => {
         } catch (err) {
             setRestaurantError(err.response?.data?.error || 'Failed to load restaurant');
             setLoading(false);
+        }
+    };
+
+    const fetchReviews = async () => {
+        try {
+            const res = await api.get(`/reviews/${id}`);
+            setReviews(res.data);
+        } catch (err) {
+            console.error('Failed to load reviews', err);
         }
     };
 
@@ -98,13 +110,14 @@ const HotelsDetail = () => {
                 {/* Hero Section */}
                 <div className="relative h-96 rounded-xl overflow-hidden">
                     <img
-                        src={restaurant.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'}
+                        src={restaurant.imageUrl || 'https://via.placeholder.com/800x400?text=Hotel+Image'}
                         alt={restaurant.name}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
+                    <div className="absolute inset-0 k bg-opacity-40 flex items-end">
+
                         <div className="p-8">
-                            <h1 className="text-4xl font-bold text-white mb-2">{restaurant.name}</h1>
+                            <h1 className="text-4xl font-bold text-white mb-2">{restaurant.name || 'Hotel Name'}</h1>
                             <div className="flex items-center text-white space-x-4">
                                 {restaurant.rating && (
                                     <div className="flex items-center">
@@ -176,6 +189,34 @@ const HotelsDetail = () => {
                                     <p className="text-gray-500 dark:text-gray-400">No top dishes available.</p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Reviews Section */}
+                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reviews ({restaurant.reviewCount || 0})</h2>
+                            {reviews.length > 0 ? (
+                                <div className="space-y-4 mb-6">
+                                    {reviews.map(review => (
+                                        <div key={review._id} className="border-b pb-4 last:border-b-0">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center">
+                                                    <span className="font-medium text-gray-900 dark:text-white">{review.user.name}</span>
+                                                    <div className="flex ml-2">
+                                                        {[1,2,3,4,5].map(star => (
+                                                            <StarIcon key={star} className={`h-4 w-4 ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}`} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <span className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                            <p className="text-gray-700 dark:text-gray-300">{review.comment}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-500 dark:text-gray-400 mb-6">No reviews yet.</p>
+                            )}
+                            {user && <ReviewForm restaurantId={id} onReviewSubmitted={() => { fetchReviews(); fetchRestaurant(); }} />}
                         </div>
                     </div>
 

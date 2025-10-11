@@ -7,6 +7,7 @@ import restaurantRoutes from './routes/restaurants.js';
 import menuRoutes from './routes/menu.js';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
+import reviewRoutes from './routes/reviews.js';
 import path from 'path';
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Serve React frontend (production)
 app.use(express.static(path.join(__dirname, '../frontend/build')));
