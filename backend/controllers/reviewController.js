@@ -46,8 +46,8 @@ export const createReview = async (req, res) => {
 
 export const getReviewsByRestaurant = async (req, res) => {
     try {
-        const { id } = req.params;
-        const reviews = await Review.find({ restaurant: id })
+        const { restaurantId } = req.params;
+        const reviews = await Review.find({ restaurant: restaurantId })
             .populate('user', 'name')
             .sort({ createdAt: -1 })
             .limit(20);
