@@ -285,6 +285,8 @@ const AdminDashboard = () => {
                               </span>
                             </div>
                             <div className="mt-2 flex items-center text-sm text-primary-500">
+                              <span>Restaurant: {b.restaurantName}</span>
+                              <span className="mx-2">•</span>
                               <span>Date: {b.date}</span>
                               <span className="mx-2">•</span>
                               <span>Guests: {b.guests}</span>

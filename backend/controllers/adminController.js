@@ -46,18 +46,17 @@ export const getMyRestaurants = async (req, res) => {
   }
 };
 
-// ✅ Get bookings for admin's restaurants
+// ✅ Get all bookings for admin visibility
 export const getBookings = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({ createdBy: req.user.id });
-    const restaurantIds = restaurants.map(r => r._id);
-    const bookings = await TableBooking.find({ restaurantId: { $in: restaurantIds } }).populate('userId', 'name');
+    const bookings = await TableBooking.find({}).populate('userId', 'name').populate('restaurantId', 'name');
     const transformedBookings = bookings.map(b => ({
       _id: b._id,
       customerName: b.userId ? b.userId.name : 'Unknown',
       date: b.date,
       guests: b.seats,
-      status: b.status === 'approved' ? 'Confirmed' : b.status === 'rejected' ? 'Rejected' : b.status
+      status: b.status === 'approved' ? 'Confirmed' : b.status === 'rejected' ? 'Rejected' : b.status,
+      restaurantName: b.restaurantId ? b.restaurantId.name : 'Unknown'
     }));
     res.json(transformedBookings);
   } catch (err) {
