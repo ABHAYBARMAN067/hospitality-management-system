@@ -106,7 +106,8 @@ hospitality-management-system/
 │   │   ├── adminController.js
 │   │   ├── authController.js
 │   │   ├── menuController.js
-│   │   └── restaurantController.js
+│   │   ├── restaurantController.js
+│   │   └── reviewController.js
 │   ├── middlewares/
 │   │   ├── adminAuth.js
 │   │   ├── auth.js
@@ -116,6 +117,7 @@ hospitality-management-system/
 │   │   ├── MenuItem.js
 │   │   ├── Order.js
 │   │   ├── Restaurant.js
+│   │   ├── Review.js
 │   │   ├── TableBooking.js
 │   │   └── User.js
 │   ├── routes/
@@ -123,13 +125,21 @@ hospitality-management-system/
 │   │   ├── auth.js
 │   │   ├── bookings.js
 │   │   ├── menu.js
-│   │   └── restaurants.js
-│   ├── .env
+│   │   ├── restaurants.js
+│   │   └── reviews.js
 │   ├── .gitignore
 │   ├── index.js
 │   ├── package.json
+│   ├── package-lock.json
 │   └── README.md
 ├── frontend/
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tailwind.config.js
+│   ├── vite.config.js
 │   ├── public/
 │   │   └── vite.svg
 │   ├── src/
@@ -140,12 +150,11 @@ hospitality-management-system/
 │   │   ├── components/
 │   │   │   ├── About.jsx
 │   │   │   ├── AdminDashboard.jsx
-│   │   │   ├── Bookings.jsx
 │   │   │   ├── Contact.jsx
 │   │   │   ├── Home.jsx
+│   │   │   ├── HotelsDetail.jsx
 │   │   │   ├── Login.jsx
 │   │   │   ├── MenuManagement.jsx
-│   │   │   ├── MyRestaurants.jsx
 │   │   │   ├── Register.jsx
 │   │   │   ├── Restaurant.jsx
 │   │   │   ├── ReviewForm.jsx
@@ -153,21 +162,16 @@ hospitality-management-system/
 │   │   │   ├── UserProfile.jsx
 │   │   │   └── UI/
 │   │   │       ├── LoadingSpinner.jsx
-│   │   │       └── Navbar.jsx
+│   │   │       ├── Navbar.jsx
+│   │   │       └── SkeletonLoader.jsx
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx
 │   │   ├── App.css
 │   │   ├── App.jsx
 │   │   ├── index.css
 │   │   ├── main.jsx
-│   │   └── vite.config.js
-│   ├── .gitignore
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── tailwind.config.js
-│   └── vite.config.js
 ├── README.md
+├── TODO.md
 
 ```
 
@@ -194,17 +198,21 @@ hospitality-management-system/
 - `PUT /api/menu/:id` - Update menu item (admin)
 - `DELETE /api/menu/:id` - Delete menu item (admin)
 
+### Reviews
+- `POST /api/reviews/:restaurantId` - Create a review for a restaurant
+- `GET /api/reviews/:restaurantId` - Get reviews for a restaurant
+
 ### Admin
 - Additional admin-specific endpoints for managing restaurants and bookings.
 
-## Contributing
 
-1. Fork the repository.
-2. Create a new branch for your feature.
-3. Commit your changes.
-4. Push to the branch.
-5. Open a Pull Request.
+
+## Contributors
+
+- **Astha** – Frontend Development
+- **Abhay** – Backend Development
+- **Anmol** – Database Management
 
 ## License
 
-This project is licensed under the MIT License.
+All rights reserved. No one can use, copy, or distribute this project without permission.
