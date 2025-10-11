@@ -35,7 +35,7 @@ const Contact = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-medium text-primary-900">Address</h3>
-                  <p className="text-primary-700">123 Foodie Street<br />Culinary City, FC 12345</p>
+                  <p className="text-primary-700">123 HospitalityHub Street<br />Culinary City, FC 12345</p>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium text-primary-900">Phone</h3>
@@ -43,7 +43,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium text-primary-900">Email</h3>
-                  <p className="text-primary-700">info@foodie.com</p>
+                  <p className="text-primary-700">info@hospitalityhub.com</p>
                 </div>
               </div>
             </div>

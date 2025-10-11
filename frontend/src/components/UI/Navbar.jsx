@@ -30,10 +30,10 @@ const Navbar = () => {
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center space-x-3">
                 <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#E03446' }}>
-                  <span className="text-white font-bold text-xl">FD</span>
+                  <span className="text-white font-bold text-xl">HH</span>
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold" style={{ color: '#E03546' }}>Foodie</h1>
+                  <h1 className="text-xl font-bold" style={{ color: '#E03546' }}>HospitalityHub</h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Discover Hotels</p>
                 </div>
               </Link>

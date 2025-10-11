@@ -87,7 +87,7 @@ const Home = () => {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl" style={{ color: '#4F191E' }}>
                         <span className="block">Welcome to</span>
-                        <span className="block" style={{ color: '#E03446' }}>Foodie</span>
+                        <span className="block" style={{ color: '#E03446' }}>HospitalityHub</span>
                     </h1>
                     <p className="mt-6 text-xl max-w-2xl mx-auto" style={{ color: '#EF4F5F' }}>
                         Discover, review and book the best restaurants near you. Your perfect dining experience starts here.
