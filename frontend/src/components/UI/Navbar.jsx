@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { Link, NavLink } from 'react-router-dom';
-import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -19,18 +18,18 @@ const Navbar = () => {
 
   const baseLink = (isActive) =>
     `${isActive
-      ? 'border-indigo-500 text-gray-900 dark:text-white'
+      ? 'text-gray-900 dark:text-white'
       : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`;
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-lg">
+    <nav style={{ backgroundColor: 'white' }} className="shadow-lg dark:bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center space-x-3">
-                <div className="h-10 w-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#E03446' }}>
                   <span className="text-white font-bold text-xl">FD</span>
                 </div>
                 <div className="hidden sm:block">
@@ -43,45 +42,29 @@ const Navbar = () => {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <NavLink
                 to="/"
-                className={({ isActive }) =>
-                  `${isActive
-                    ? 'border-indigo-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                }
+                className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
               >
                 Home
               </NavLink>
               <NavLink
                 to="/about"
-                className={({ isActive }) =>
-                  `${isActive
-                    ? 'border-indigo-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                }
+                className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
               >
                 About
               </NavLink>
               <NavLink
                 to="/services"
-                className={({ isActive }) =>
-                  `${isActive
-                    ? 'border-indigo-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                }
+                className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
               >
                 Services
               </NavLink>
               <NavLink
                 to="/contact"
-                className={({ isActive }) =>
-                  `${isActive
-                    ? 'border-indigo-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                }
+                className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
               >
                 Contact
               </NavLink>
@@ -91,10 +74,11 @@ const Navbar = () => {
                   to="/my-table"
                   className={({ isActive }) =>
                     `${isActive
-                      ? 'border-indigo-500 text-gray-900 dark:text-white'
+                      ? 'text-gray-900 dark:text-white'
                       : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
                   }
+                  style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
                 >
                   My Table
                 </NavLink>
@@ -106,10 +90,11 @@ const Navbar = () => {
                     to="/admin/my-restaurants"
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'border-indigo-500 text-gray-900 dark:text-white'
+                        ? 'text-gray-900 dark:text-white'
                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                       } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
                     }
+                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
                   >
                     My Restaurants
                   </NavLink>
@@ -117,10 +102,11 @@ const Navbar = () => {
                     to="/admin/bookings"
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'border-indigo-500 text-gray-900 dark:text-white'
+                        ? 'text-gray-900 dark:text-white'
                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                       } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
                     }
+                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
                   >
                     Bookings
                   </NavLink>
@@ -130,32 +116,33 @@ const Navbar = () => {
           </div>
 
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <ThemeToggle />
-
             {user ? (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2"
+                  style={{ color: 'black', '--tw-ring-color': '#EF4F5F' }}
                 >
-                  <div className="h-8 w-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
+                  <div className="h-8 w-8 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: '#E03446' }}>
                     {user.name ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('') : 'U'}
                   </div>
                   <span className="hidden md:block">{user.name || 'Profile'}</span>
                   <span>▾</span>
                 </button>
                 {showProfileDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10">
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-10" style={{ backgroundColor: 'white' }}>
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      style={{ color: 'black' }}
                       onClick={() => setShowProfileDropdown(false)}
                     >
                       Profile
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                      style={{ color: 'black' }}
                     >
                       Logout
                     </button>
@@ -166,13 +153,17 @@ const Navbar = () => {
               <>
                 <NavLink
                   to="/login"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100"
+                  style={{ color: 'black' }}
                 >
                   Sign In
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="px-3 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-white"
+                  style={{ backgroundColor: '#E03446' }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
                 >
                   Sign Up
                 </NavLink>
@@ -182,9 +173,10 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
-            <button
+                          <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              className="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset"
+              style={{ color: 'black', '--tw-ring-color': '#EF4F5F' }}
             >
               <span className="sr-only">Open main menu</span>
               {menuOpen ? (
@@ -209,10 +201,11 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   `${isActive
-                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                    ? 'dark:bg-gray-700 dark:text-white'
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
               >
                 Home
               </NavLink>
@@ -221,10 +214,11 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   `${isActive
-                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                    ? 'dark:bg-gray-700 dark:text-white'
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
               >
                 About
               </NavLink>
@@ -233,10 +227,11 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   `${isActive
-                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                    ? 'dark:bg-gray-700 dark:text-white'
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
               >
                 Services
               </NavLink>
@@ -245,10 +240,11 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   `${isActive
-                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                    ? 'dark:bg-gray-700 dark:text-white'
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
               >
                 Contact
               </NavLink>
@@ -259,10 +255,11 @@ const Navbar = () => {
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `${isActive
-                      ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                      ? 'dark:bg-gray-700 dark:text-white'
                       : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                     } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                   }
+                  style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
                 >
                   My Table
                 </NavLink>
@@ -275,10 +272,11 @@ const Navbar = () => {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                        ? 'dark:bg-gray-700 dark:text-white'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
                   >
                     My Restaurants
                   </NavLink>
@@ -287,10 +285,11 @@ const Navbar = () => {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                        ? 'dark:bg-gray-700 dark:text-white'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
                   >
                     Bookings
                   </NavLink>
@@ -325,10 +324,11 @@ const Navbar = () => {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                        ? 'dark:bg-gray-700 dark:text-white'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
                   >
                     Sign In
                   </NavLink>
@@ -337,10 +337,11 @@ const Navbar = () => {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `${isActive
-                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-gray-700 dark:text-white'
+                        ? 'dark:bg-gray-700 dark:text-white'
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
                   >
                     Sign Up
                   </NavLink>
