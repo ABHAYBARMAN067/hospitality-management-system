@@ -33,8 +33,8 @@ const Navbar = () => {
                   <span className="text-white font-bold text-xl">FD</span>
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">Foodie</h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Discover & Book</p>
+                  <h1 className="text-xl font-bold" style={{ color: '#E03546' }}>Foodie</h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Discover Hotels</p>
                 </div>
               </Link>
             </div>

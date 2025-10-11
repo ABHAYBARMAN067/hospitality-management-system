@@ -8,6 +8,9 @@ import AdminDashboard from './components/AdminDashboard';
 import UserProfile from './components/UserProfile';
 import MenuManagement from './components/MenuManagement';
 import ReviewForm from './components/ReviewForm';
+import About from './components/About';
+import Service from './components/Service';
+import Contact from './components/Contact';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -21,7 +24,10 @@ const App = () => (
       <Route path="/restaurant/:id" element={<Restaurant />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      
+      <Route path="/about" element={<About />} />
+      <Route path="/services" element={<Service />} />
+      <Route path="/contact" element={<Contact />} />
+
       {/* Admin routes */}
       <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
