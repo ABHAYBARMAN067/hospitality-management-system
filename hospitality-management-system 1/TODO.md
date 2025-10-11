@@ -1,5 +1,0 @@
-- [x] Update createHotel function in backend/src/controllers/hotelController.js to use uploadImage helper for hotel image validation
-- [x] Update updateHotel function in backend/src/controllers/hotelController.js to use uploadImage helper for hotel image validation
-- [x] Optionally, update dish image uploads in updateHotel to use uploadImage for consistency
-- [x] Expand allowed image formats to include AVIF and other common types
-- [x] Test the changes: The backend now properly validates image file types for both hotel and dish images, allowing JPEG, PNG, JPG, WebP, GIF, BMP, TIFF, HEIC, HEIF, and AVIF.
