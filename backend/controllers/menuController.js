@@ -11,7 +11,17 @@ export const getMenuItemsByRestaurant = async (req, res) => {
 
 export const addMenuItem = async (req, res) => {
     try {
-        const item = new MenuItem(req.body);
+        const menuData = {
+            restaurantId: req.body.restaurantId,
+            name: req.body.name,
+            description: req.body.description,
+            price: parseFloat(req.body.price),
+            isTop: req.body.isTop === 'true' || req.body.isTop === true,
+        };
+        if (req.file) {
+            menuData.image = req.file.path; // Cloudinary URL
+        }
+        const item = new MenuItem(menuData);
         await item.save();
         res.status(201).json(item);
     } catch (err) {

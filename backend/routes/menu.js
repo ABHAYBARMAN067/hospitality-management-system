@@ -5,15 +5,19 @@ import {
     updateMenuItem,
     deleteMenuItem
 } from '../controllers/menuController.js';
+import fileUpload from '../middlewares/fileUpload.js'; // Ensure default export is a function
 
 const router = express.Router();
 
 // Get all menu items for a restaurant
 router.get('/restaurant/:restaurantId', getMenuItemsByRestaurant);
-// Add a menu item (owner only)
-router.post('/', addMenuItem);
-// Update a menu item (owner only)
+
+// Add a menu item (owner only) with file upload
+router.post('/', fileUpload.single('image'), addMenuItem); 
+
+
 router.put('/:id', updateMenuItem);
+
 // Delete a menu item (owner only)
 router.delete('/:id', deleteMenuItem);
 

@@ -1,10 +1,11 @@
-
 // src/components/AdminDashboard.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState(null);
   const [form, setForm] = useState({
     name: "",
@@ -239,6 +240,15 @@ const AdminDashboard = () => {
                     </div>
                   )}
                 </dl>
+              </div>
+              <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => navigate('/menu-management')}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <PencilIcon className="h-5 w-5 mr-2" />
+                  Edit Menu
+                </button>
               </div>
             </div>
           )}

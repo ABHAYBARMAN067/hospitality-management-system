@@ -8,6 +8,63 @@ const MenuManagement = () => {
     const [restaurant, setRestaurant] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [newItem, setNewItem] = useState({
+        name: '',
+        description: '',
+        price: 0,
+        isTop: false,
+        image: null
+    });
+
+    const handleNewItemChange = (e) => {
+        const { name, value, type, checked, files } = e.target;
+        if (type === 'checkbox') {
+            setNewItem(prev => ({ ...prev, [name]: checked }));
+        } else if (name === 'price') {
+            setNewItem(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+        } else if (files) {
+            setNewItem(prev => ({ ...prev, [name]: files[0] }));
+        } else {
+            setNewItem(prev => ({ ...prev, [name]: value }));
+        }
+    };
+
+    const handleAddSubmit = async (e) => {
+        e.preventDefault();
+        if (!restaurant) {
+            alert('Please add your restaurant first');
+            return;
+        }
+        try {
+            const data = new FormData();
+            data.append('restaurantId', restaurant._id);
+            data.append('name', newItem.name);
+            data.append('description', newItem.description);
+            data.append('price', newItem.price);
+            data.append('isTop', newItem.isTop);
+            if (newItem.image) {
+                data.append('image', newItem.image);
+            }
+            const res = await api.post('/menu/', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setMenuItems(prev => [...prev, res.data]);
+            setShowAddModal(false);
+            setNewItem({
+                name: '',
+                description: '',
+                price: 0,
+                isTop: false,
+                image: null
+            });
+        } catch (err) {
+            console.error('Error adding menu item:', err);
+            alert('Failed to add dish. Please try again.');
+        }
+    };
+
     useEffect(() => {
         fetchRestaurantAndMenu();
     }, []);
@@ -124,8 +181,182 @@ const MenuManagement = () => {
                     </div>
                 </div>
             </div>
+
+            {showAddModal && (
+                <div
+                    className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                    onClick={() => setShowAddModal(false)}
+                >
+                    <div
+                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Dish</h3>
+                        <form onSubmit={handleAddSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Dish Name *</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={newItem.name}
+                                    onChange={handleNewItemChange}
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea
+                                    name="description"
+                                    value={newItem.description}
+                                    onChange={handleNewItemChange}
+                                    rows="3"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹) *</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={newItem.price}
+                                    onChange={handleNewItemChange}
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                <input
+                                    type="file"
+                                    name="image"
+                                    onChange={handleNewItemChange}
+                                    accept="image/*"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="isTop"
+                                    checked={newItem.isTop}
+                                    onChange={handleNewItemChange}
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                />
+                                <label className="ml-2 text-sm text-gray-700">Featured Top Dish</label>
+                            </div>
+                            <div className="flex space-x-3 pt-4">
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                >
+                                    Add Dish
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAddModal(false)}
+                                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </div>
+
     );
-};
+    {
+        showAddModal && (
+            <div
+                className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                onClick={() => setShowAddModal(false)}
+            >
+                <div
+                    className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Dish</h3>
+                    <form onSubmit={handleAddSubmit} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Dish Name *</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={newItem.name}
+                                onChange={handleNewItemChange}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea
+                                name="description"
+                                value={newItem.description}
+                                onChange={handleNewItemChange}
+                                rows="3"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹) *</label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={newItem.price}
+                                onChange={handleNewItemChange}
+                                min="0"
+                                step="0.01"
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                            <input
+                                type="file"
+                                name="image"
+                                onChange={handleNewItemChange}
+                                accept="image/*"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                name="isTop"
+                                checked={newItem.isTop}
+                                onChange={handleNewItemChange}
+                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                            />
+                            <label className="ml-2 text-sm text-gray-700">Featured Top Dish</label>
+                        </div>
+                        <div className="flex space-x-3 pt-4">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                                Add Dish
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowAddModal(false)}
+                                className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )
+    }
+    
+  };
 
 export default MenuManagement;
