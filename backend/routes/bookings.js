@@ -5,6 +5,17 @@ import { verifyToken } from '../middlewares/auth.js';
 
 const router = express.Router();
 
+// Get user's bookings
+router.get('/', verifyToken, async (req, res) => {
+  try {
+    const bookings = await TableBooking.find({ userId: req.user.id }).populate('restaurantId', 'name');
+    res.json(bookings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // User can create a booking
 router.post('/', verifyToken, async (req, res) => {
   try {

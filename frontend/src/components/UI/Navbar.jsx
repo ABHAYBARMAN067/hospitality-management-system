@@ -72,13 +72,8 @@ const Navbar = () => {
               {user && user.role === 'user' && (
                 <NavLink
                   to="/my-table"
-                  className={({ isActive }) =>
-                    `${isActive
-                      ? 'text-gray-900 dark:text-white'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                  }
-                  style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
+                  className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
                 >
                   My Table
                 </NavLink>
@@ -173,7 +168,7 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
-                          <button
+            <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset"
               style={{ color: 'black', '--tw-ring-color': '#EF4F5F' }}
@@ -259,7 +254,7 @@ const Navbar = () => {
                       : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                     } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                   }
-                  style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                  style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
                 >
                   My Table
                 </NavLink>

@@ -9,6 +9,7 @@ import AdminDashboard from './components/AdminDashboard';
 import UserProfile from './components/UserProfile';
 import MenuManagement from './components/MenuManagement';
 import ReviewForm from './components/ReviewForm';
+import MyTable from './components/MyTable';
 import About from './components/About';
 import Service from './components/Service';
 import Contact from './components/Contact';
@@ -35,6 +36,7 @@ const App = () => (
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
 
       <Route path="/profile" element={<UserProfile />} />
+      <Route path="/my-table" element={<ProtectedRoute><MyTable /></ProtectedRoute>} />
       <Route path="/menu-management" element={<MenuManagement />} />
       <Route path="/review" element={<ReviewForm />} />
     </Routes>
