@@ -16,7 +16,7 @@ router.get('/restaurant/:restaurantId', getMenuItemsByRestaurant);
 router.post('/', fileUpload.single('image'), addMenuItem); 
 
 
-router.put('/:id', updateMenuItem);
+router.put('/:id', fileUpload.single('image'), updateMenuItem);
 
 // Delete a menu item (owner only)
 router.delete('/:id', deleteMenuItem);

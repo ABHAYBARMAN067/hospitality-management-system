@@ -4,6 +4,8 @@ import api from '../api/api.js';
 
 const MenuManagement = () => {
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [menuItems, setMenuItems] = useState([]);
     const [restaurant, setRestaurant] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -65,6 +67,49 @@ const MenuManagement = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (!confirm('Are you sure you want to delete this item?')) return;
+        try {
+            await api.delete(`/menu/${id}`);
+            setMenuItems(prev => prev.filter(item => item._id !== id));
+        } catch (err) {
+            console.error('Error deleting menu item:', err);
+            alert('Failed to delete dish. Please try again.');
+        }
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const data = new FormData();
+            data.append('name', newItem.name);
+            data.append('description', newItem.description);
+            data.append('price', newItem.price);
+            data.append('isTop', newItem.isTop);
+            if (newItem.image) {
+                data.append('image', newItem.image);
+            }
+            const res = await api.put(`/menu/${editingItem._id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setMenuItems(prev => prev.map(item => item._id === editingItem._id ? res.data : item));
+            setShowEditModal(false);
+            setEditingItem(null);
+            setNewItem({
+                name: '',
+                description: '',
+                price: 0,
+                isTop: false,
+                image: null
+            });
+        } catch (err) {
+            console.error('Error updating menu item:', err);
+            alert('Failed to update dish. Please try again.');
+        }
+    };
+
     useEffect(() => {
         fetchRestaurantAndMenu();
     }, []);
@@ -108,7 +153,7 @@ const MenuManagement = () => {
                         <button
                             type="button"
                             onClick={() => setShowAddModal(true)}
-                            className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 sm:w-auto"
+                            className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#E03446] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#D02E40] focus:outline-none focus:ring-2 focus:ring-[#E03446] focus:ring-offset-2 sm:w-auto"
                         >
                             <PlusIcon className="h-5 w-5 mr-2" />
                             Add Dish
@@ -144,7 +189,7 @@ const MenuManagement = () => {
                                         {menuItems.map((item) => (
                                             <tr key={item._id}>
                                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
-                                                    <img src={item.image || 'https://via.placeholder.com/40'} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
+                                                    <img src={item.image || 'https://placehold.co/40x40'} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-primary-900">
                                                     {item.name}
@@ -162,11 +207,13 @@ const MenuManagement = () => {
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <button
+                                                        onClick={() => { setEditingItem(item); setNewItem({name: item.name, description: item.description, price: item.price, isTop: item.isTop, image: null}); setShowEditModal(true); }}
                                                         className="text-primary-600 hover:text-primary-900 mr-4"
                                                     >
                                                         <PencilIcon className="h-5 w-5" />
                                                     </button>
                                                     <button
+                                                        onClick={() => handleDelete(item._id)}
                                                         className="text-red-600 hover:text-red-900"
                                                     >
                                                         <TrashIcon className="h-5 w-5" />
@@ -188,13 +235,13 @@ const MenuManagement = () => {
                     onClick={() => setShowAddModal(false)}
                 >
                     <div
-                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-primary-100"
+                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h3 className="text-lg font-medium leading-6 text-primary-900 mb-4">Add New Dish</h3>
+                        <h3 className="text-lg font-medium leading-6 text-[#E03446] mb-4">Add New Dish</h3>
                         <form onSubmit={handleAddSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-primary-700 mb-1">Dish Name *</label>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Dish Name *</label>
                                 <input
                                     type="text"
                                     name="name"
@@ -205,7 +252,7 @@ const MenuManagement = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-primary-700 mb-1">Description</label>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Description</label>
                                 <textarea
                                     name="description"
                                     value={newItem.description}
@@ -215,7 +262,7 @@ const MenuManagement = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-primary-700 mb-1">Price (₹) *</label>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Price (₹) *</label>
                                 <input
                                     type="number"
                                     name="price"
@@ -228,7 +275,7 @@ const MenuManagement = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-primary-700 mb-1">Image</label>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Image</label>
                                 <input
                                     type="file"
                                     name="image"
@@ -245,19 +292,104 @@ const MenuManagement = () => {
                                     onChange={handleNewItemChange}
                                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
                                 />
-                                <label className="ml-2 text-sm text-primary-700">Featured Top Dish</label>
+                                <label className="ml-2 text-sm text-[#E03446]">Featured Top Dish</label>
                             </div>
                             <div className="flex space-x-3 pt-4">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    className="flex-1 bg-[#E03446] text-white py-2 px-4 rounded-md hover:bg-[#D02E40] focus:outline-none focus:ring-2 focus:ring-[#E03446]"
                                 >
                                     Add Dish
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowAddModal(false)}
-                                    className="flex-1 bg-primary-100 text-primary-700 py-2 px-4 rounded-md hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    className="flex-1 bg-white text-[#E03446] border border-[#E03446] py-2 px-4 rounded-md hover:bg-[#FFEDEF] focus:outline-none focus:ring-2 focus:ring-[#E03446]"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {showEditModal && (
+                <div
+                    className="fixed inset-0 bg-primary-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+                    onClick={() => setShowEditModal(false)}
+                >
+                    <div
+                        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-lg font-medium leading-6 text-[#E03446] mb-4">Edit Dish</h3>
+                        <form onSubmit={handleEditSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Dish Name *</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={newItem.name}
+                                    onChange={handleNewItemChange}
+                                    required
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Description</label>
+                                <textarea
+                                    name="description"
+                                    value={newItem.description}
+                                    onChange={handleNewItemChange}
+                                    rows="3"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Price (₹) *</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={newItem.price}
+                                    onChange={handleNewItemChange}
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[#E03446] mb-1">Image</label>
+                                <input
+                                    type="file"
+                                    name="image"
+                                    onChange={handleNewItemChange}
+                                    accept="image/*"
+                                    className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name="isTop"
+                                    checked={newItem.isTop}
+                                    onChange={handleNewItemChange}
+                                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
+                                />
+                                <label className="ml-2 text-sm text-[#E03446]">Featured Top Dish</label>
+                            </div>
+                            <div className="flex space-x-3 pt-4">
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-[#E03446] text-white py-2 px-4 rounded-md hover:bg-[#D02E40] focus:outline-none focus:ring-2 focus:ring-[#E03446]"
+                                >
+                                    Update Dish
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { setShowEditModal(false); setEditingItem(null); setNewItem({name: '', description: '', price: 0, isTop: false, image: null}); }}
+                                    className="flex-1 bg-white text-[#E03446] border border-[#E03446] py-2 px-4 rounded-md hover:bg-[#FFEDEF] focus:outline-none focus:ring-2 focus:ring-[#E03446]"
                                 >
                                     Cancel
                                 </button>
@@ -270,93 +402,7 @@ const MenuManagement = () => {
         </div>
 
     );
-    {
-        showAddModal && (
-            <div
-                className="fixed inset-0 bg-primary-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-                onClick={() => setShowAddModal(false)}
-            >
-                <div
-                    className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-primary-100"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <h3 className="text-lg font-medium leading-6 text-primary-900 mb-4">Add New Dish</h3>
-                    <form onSubmit={handleAddSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-primary-700 mb-1">Dish Name *</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={newItem.name}
-                                onChange={handleNewItemChange}
-                                required
-                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-primary-700 mb-1">Description</label>
-                            <textarea
-                                name="description"
-                                value={newItem.description}
-                                onChange={handleNewItemChange}
-                                rows="3"
-                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-primary-700 mb-1">Price (₹) *</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={newItem.price}
-                                onChange={handleNewItemChange}
-                                min="0"
-                                step="0.01"
-                                required
-                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-primary-700 mb-1">Image</label>
-                            <input
-                                type="file"
-                                name="image"
-                                onChange={handleNewItemChange}
-                                accept="image/*"
-                                className="w-full px-3 py-2 border border-primary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                name="isTop"
-                                checked={newItem.isTop}
-                                onChange={handleNewItemChange}
-                                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded"
-                            />
-                            <label className="ml-2 text-sm text-primary-700">Featured Top Dish</label>
-                        </div>
-                        <div className="flex space-x-3 pt-4">
-                            <button
-                                type="submit"
-                                className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            >
-                                Add Dish
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setShowAddModal(false)}
-                                className="flex-1 bg-primary-100 text-primary-700 py-2 px-4 rounded-md hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        )
-    }
-    
+
   };
 
 export default MenuManagement;

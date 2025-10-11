@@ -1,4 +1,5 @@
 import MenuItem from '../models/MenuItem.js';
+import cloudinary from '../config/cloudinary.js';
 
 export const getMenuItemsByRestaurant = async (req, res) => {
     try {
@@ -19,7 +20,17 @@ export const addMenuItem = async (req, res) => {
             isTop: req.body.isTop === 'true' || req.body.isTop === true,
         };
         if (req.file) {
-            menuData.image = req.file.path; // Cloudinary URL
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { resource_type: 'image' },
+                    (err, uploaded) => {
+                        if (err) reject(err);
+                        else resolve(uploaded);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+            menuData.image = result.secure_url;
         }
         const item = new MenuItem(menuData);
         await item.save();
@@ -31,7 +42,26 @@ export const addMenuItem = async (req, res) => {
 
 export const updateMenuItem = async (req, res) => {
     try {
-        const item = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updateData = {
+            name: req.body.name,
+            description: req.body.description,
+            price: parseFloat(req.body.price),
+            isTop: req.body.isTop === 'true' || req.body.isTop === true,
+        };
+        if (req.file) {
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { resource_type: 'image' },
+                    (err, uploaded) => {
+                        if (err) reject(err);
+                        else resolve(uploaded);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+            updateData.image = result.secure_url;
+        }
+        const item = await MenuItem.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!item) return res.status(404).json({ error: 'Not found' });
         res.json(item);
     } catch (err) {

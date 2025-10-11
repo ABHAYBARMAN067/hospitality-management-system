@@ -33,33 +33,33 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-primary-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-8 bg-primary-100 p-8 rounded-xl shadow-lg">
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#FFEDEF' }}>
+            <div className="max-w-md w-full space-y-8 p-8 rounded-xl shadow-lg" style={{ backgroundColor: 'white' }}>
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-primary-900">
+                    <h2 className="mt-6 text-center text-3xl font-extrabold" style={{ color: 'black' }}>
                         Create your account
                     </h2>
-                    <p className="mt-2 text-center text-sm text-primary-700">
+                    <p className="mt-2 text-center text-sm" style={{ color: 'black' }}>
                         Join us today
                     </p>
                 </div>
 
                 {message && (
-                    <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-                        <p className="text-sm text-green-700">{message}</p>
+                    <div className="border-l-4 p-4 mb-4" style={{ backgroundColor: '#FFEDEF', borderColor: '#EF4F5F' }}>
+                        <p className="text-sm" style={{ color: '#E03446' }}>{message}</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className="bg-red-50 border-l-4 border-red-500 p-4">
+                    <div className="border-l-4 p-4" style={{ backgroundColor: '#FFEDEF', borderColor: '#EF4F5F' }}>
                         <div className="flex">
                             <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <svg className="h-5 w-5" style={{ color: '#E03446' }} viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                                 </svg>
                             </div>
                             <div className="ml-3">
-                                <p className="text-sm text-red-700">{error}</p>
+                                <p className="text-sm" style={{ color: '#E03446' }}>{error}</p>
                             </div>
                         </div>
                     </div>
@@ -76,7 +76,8 @@ const Register = () => {
                                 required
                                 value={form.name}
                                 onChange={handleChange}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-primary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 rounded-t-md focus:outline-none focus:z-10 sm:text-sm"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F] rounded-t-md focus:z-10 sm:text-sm"
+                                style={{ color: 'black' }}
                                 placeholder="Full name"
                             />
                         </div>
@@ -89,7 +90,8 @@ const Register = () => {
                                 required
                                 value={form.email}
                                 onChange={handleChange}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-primary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 focus:outline-none focus:z-10 sm:text-sm"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F] focus:z-10 sm:text-sm"
+                                style={{ color: 'black' }}
                                 placeholder="Email address"
                             />
                         </div>
@@ -102,7 +104,8 @@ const Register = () => {
                                 required
                                 value={form.password}
                                 onChange={handleChange}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-primary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 rounded-b-md focus:outline-none focus:z-10 sm:text-sm"
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F] rounded-b-md focus:z-10 sm:text-sm"
+                                style={{ color: 'black' }}
                                 placeholder="Password"
                             />
                         </div>
@@ -114,9 +117,10 @@ const Register = () => {
                             type="checkbox"
                             checked={form.role === 'admin'}
                             onChange={handleChange}
-                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-primary-300 rounded cursor-pointer"
+                            className="h-4 w-4 focus:ring-[#EF4F5F] border-gray-300 rounded cursor-pointer"
+                            style={{ color: '#E03446' }}
                         />
-                        <label htmlFor="admin-checkbox" className="ml-2 block text-sm text-primary-900 cursor-pointer">
+                        <label htmlFor="admin-checkbox" className="ml-2 block text-sm cursor-pointer" style={{ color: 'black' }}>
                             Register as Admin
                         </label>
                     </div>
@@ -124,7 +128,10 @@ const Register = () => {
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F] transition-colors duration-200"
+                            style={{ backgroundColor: '#E03446' }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
                         >
                             Create Account
                         </button>

@@ -46,10 +46,15 @@ export const getMyRestaurants = async (req, res) => {
   }
 };
 
-// ✅ Get all bookings for admin visibility
+// ✅ Get all bookings for admin visibility (only for restaurants owned by admin)
 export const getBookings = async (req, res) => {
   try {
-    const bookings = await TableBooking.find({}).populate('userId', 'name').populate('restaurantId', 'name');
+    // First, get restaurants owned by the admin
+    const restaurants = await Restaurant.find({ createdBy: req.user.id }).select('_id');
+    const restaurantIds = restaurants.map(r => r._id);
+
+    // Then, get bookings for those restaurants
+    const bookings = await TableBooking.find({ restaurantId: { $in: restaurantIds } }).populate('userId', 'name').populate('restaurantId', 'name');
     const transformedBookings = bookings.map(b => ({
       _id: b._id,
       customerName: b.userId ? b.userId.name : 'Unknown',
