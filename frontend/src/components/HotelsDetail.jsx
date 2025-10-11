@@ -85,7 +85,7 @@ const HotelsDetail = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex justify-center items-center" style={{ backgroundColor: '#FFF5F6' }}>
+            <div className="min-h-screen flex justify-center items-center" style={{ backgroundColor: '#FFEDEF' }}>
                 <LoadingSpinner size="large" />
             </div>
         );
@@ -93,17 +93,17 @@ const HotelsDetail = () => {
 
     if (!restaurant) {
         return (
-            <div className="min-h-screen flex justify-center items-center" style={{ backgroundColor: '#FFF5F6' }}>
+            <div className="min-h-screen flex justify-center items-center" style={{ backgroundColor: '#FFEDEF' }}>
                 <div className="text-center">
                     <h3 className="mt-2 text-xl font-medium" style={{ color: '#4F191E' }}>Hotel not found</h3>
-                    <p className="mt-1" style={{ color: '#FF7B8B' }}>The hotel you're looking for doesn't exist.</p>
+                    <p className="mt-1" style={{ color: '#EF4F5F' }}>The hotel you're looking for doesn't exist.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: '#FFF5F6' }}>
+        <div className="min-h-screen" style={{ backgroundColor: '#FFEDEF' }}>
             <Navbar />
 
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -114,7 +114,7 @@ const HotelsDetail = () => {
                         alt={restaurant.name}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 k bg-opacity-40 flex items-end">
+                    <div className="absolute inset-0 bg-opacity-40 flex items-end">
 
                         <div className="p-8">
                             <h1 className="text-4xl font-bold text-white mb-2">{restaurant.name || 'Hotel Name'}</h1>
@@ -138,36 +138,36 @@ const HotelsDetail = () => {
                 <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
                     {/* Details Section */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Hotel Details</h2>
+                        <div className="bg-white shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-[#4F191E] mb-4">Hotel Details</h2>
                             <div className="space-y-4">
                                 <div className="flex items-start">
                                     <MapPinIcon className="h-6 w-6 text-gray-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Location</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{restaurant.address}</p>
+                                        <h3 className="text-sm font-medium text-[#4F191E]">Location</h3>
+                                        <p className="text-sm text-gray-500">{restaurant.address}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
                                     <PhoneIcon className="h-6 w-6 text-gray-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Contact</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{restaurant.contactNumber || restaurant.contact}</p>
+                                        <h3 className="text-sm font-medium text-[#4F191E]">Contact</h3>
+                                        <p className="text-sm text-gray-500">{restaurant.contactNumber || restaurant.contact}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">
                                     <ClockIcon className="h-6 w-6 text-gray-400 mt-1" />
                                     <div className="ml-3">
-                                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">Hours</h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">11:00 AM - 10:00 PM</p>
+                                        <h3 className="text-sm font-medium text-[#4F191E]">Hours</h3>
+                                        <p className="text-sm text-gray-500">11:00 AM - 10:00 PM</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Top Dishes Section */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Top Dishes</h2>
+                        <div className="bg-white shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-[#4F191E] mb-4">Top Dishes</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {restaurant.topMenuItems && restaurant.topMenuItems.length > 0 ? (
                                     restaurant.topMenuItems.map((item) => (
@@ -181,26 +181,26 @@ const HotelsDetail = () => {
                                             </div>
                                             <div>
                                                 <h3 className="text-sm font-medium" style={{ color: '#4F191E' }}>{item.name}</h3>
-                                                <p className="text-sm" style={{ color: '#FF7B8B' }}>₹{item.price}</p>
+                                                <p className="text-sm" style={{ color: '#EF4F5F' }}>₹{item.price}</p>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-500 dark:text-gray-400">No top dishes available.</p>
+                                    <p className="text-gray-500">No top dishes available.</p>
                                 )}
                             </div>
                         </div>
 
                         {/* Reviews Section */}
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reviews ({restaurant.reviewCount || 0})</h2>
+                        <div className="bg-white shadow rounded-lg p-6">
+                            <h2 className="text-xl font-semibold text-[#4F191E] mb-4">Reviews ({restaurant.reviewCount || 0})</h2>
                             {reviews.length > 0 ? (
                                 <div className="space-y-4 mb-6">
                                     {reviews.map(review => (
                                         <div key={review._id} className="border-b pb-4 last:border-b-0">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center">
-                                                    <span className="font-medium text-gray-900 dark:text-white">{review.user.name}</span>
+                                                    <span className="font-medium text-[#4F191E]">{review.user.name}</span>
                                                     <div className="flex ml-2">
                                                         {[1,2,3,4,5].map(star => (
                                                             <StarIcon key={star} className={`h-4 w-4 ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}`} />
@@ -209,12 +209,12 @@ const HotelsDetail = () => {
                                                 </div>
                                                 <span className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</span>
                                             </div>
-                                            <p className="text-gray-700 dark:text-gray-300">{review.comment}</p>
+                                            <p className="text-gray-700">{review.comment}</p>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="text-gray-500 dark:text-gray-400 mb-6">No reviews yet.</p>
+                                <p className="text-gray-500 mb-6">No reviews yet.</p>
                             )}
                             {user && <ReviewForm restaurantId={id} onReviewSubmitted={() => { fetchReviews(); fetchRestaurant(); }} />}
                         </div>
@@ -222,20 +222,20 @@ const HotelsDetail = () => {
 
                     {/* Booking Section */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 sticky top-8">
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Make a Reservation</h2>
+                        <div className="bg-white shadow rounded-lg p-6 sticky top-8">
+                            <h2 className="text-xl font-semibold text-[#4F191E] mb-4">Make a Reservation</h2>
                             {!user ? (
-                                <p className="text-gray-500 dark:text-gray-400">Please log in to make a reservation.</p>
+                                <p className="text-gray-500">Please log in to make a reservation.</p>
                             ) : bookingSuccess ? (
                                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md w-full mx-4">
-                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Reservation Successful!</h3>
-                                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                                    <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                                        <h3 className="text-xl font-semibold text-[#4F191E] mb-4">Reservation Successful!</h3>
+                                        <p className="text-gray-600 mb-6">
                                             Your table has been reserved for {guestCount} guest{guestCount > 1 ? 's' : ''} on {selectedDate} at {selectedTime}.
                                         </p>
                                         <button
                                             onClick={() => setBookingSuccess(null)}
-                                            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
+                                            className="w-full bg-[#E03446] text-white py-2 px-4 rounded-md hover:bg-[#BF238B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
                                         >
                                             Close
                                         </button>
@@ -244,24 +244,24 @@ const HotelsDetail = () => {
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        <label className="block text-sm font-medium text-[#4F191E] mb-1">
                                             Date
                                         </label>
                                         <input
                                             type="date"
                                             value={selectedDate}
                                             onChange={(e) => setSelectedDate(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F]"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        <label className="block text-sm font-medium text-[#4F191E] mb-1">
                                             Time
                                         </label>
                                         <select
                                             value={selectedTime}
                                             onChange={(e) => setSelectedTime(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F]"
                                         >
                                             <option value="">Select time</option>
                                             <option value="12:00">12:00 PM</option>
@@ -271,13 +271,13 @@ const HotelsDetail = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        <label className="block text-sm font-medium text-[#4F191E] mb-1">
                                             Number of Guests
                                         </label>
                                         <select
                                             value={guestCount}
                                             onChange={(e) => setGuestCount(Number(e.target.value))}
-                                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EF4F5F] focus:border-[#EF4F5F]"
                                         >
                                             {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                                                 <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
@@ -287,11 +287,11 @@ const HotelsDetail = () => {
                                 <button
                                     type="submit"
                                     disabled={bookingLoading}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E03446] hover:bg-[#BF238B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F] disabled:opacity-50"
                                 >
                                     {bookingLoading ? 'Reserving...' : 'Reserve Table'}
                                 </button>
-                                {bookingError && <p className="text-red-500 text-sm mt-2">{bookingError}</p>}
+                                {bookingError && <p className="text-[#E03446] text-sm mt-2">{bookingError}</p>}
                             </form>
                             )}
                         </div>

@@ -83,25 +83,15 @@ const Navbar = () => {
                 <>
                   <NavLink
                     to="/admin/my-restaurants"
-                    className={({ isActive }) =>
-                      `${isActive
-                        ? 'text-gray-900 dark:text-white'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                    }
-                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
+                    className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
                   >
                     My Restaurants
                   </NavLink>
                   <NavLink
                     to="/admin/bookings"
-                    className={({ isActive }) =>
-                      `${isActive
-                        ? 'text-gray-900 dark:text-white'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`
-                    }
-                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F' } : {}}
+                    className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
                   >
                     Bookings
                   </NavLink>
@@ -200,7 +190,7 @@ const Navbar = () => {
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
-                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
               >
                 Home
               </NavLink>
@@ -213,7 +203,7 @@ const Navbar = () => {
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
-                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
               >
                 About
               </NavLink>
@@ -226,7 +216,7 @@ const Navbar = () => {
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
-                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
               >
                 Services
               </NavLink>
@@ -239,7 +229,7 @@ const Navbar = () => {
                     : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                 }
-                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
               >
                 Contact
               </NavLink>
@@ -271,7 +261,7 @@ const Navbar = () => {
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
                   >
                     My Restaurants
                   </NavLink>
@@ -284,7 +274,7 @@ const Navbar = () => {
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
                   >
                     Bookings
                   </NavLink>
@@ -297,6 +287,7 @@ const Navbar = () => {
                     to="/profile"
                     onClick={() => setMenuOpen(false)}
                     className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-base font-medium"
+                    style={{ color: 'black' }}
                   >
                     Profile
                   </Link>
@@ -306,6 +297,7 @@ const Navbar = () => {
                       setMenuOpen(false);
                     }}
                     className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-base font-medium"
+                    style={{ color: 'black' }}
                   >
                     Logout
                   </button>
@@ -323,7 +315,7 @@ const Navbar = () => {
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
                   >
                     Sign In
                   </NavLink>
@@ -336,7 +328,7 @@ const Navbar = () => {
                         : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                       } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
                     }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: '#BF238' } : {}}
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
                   >
                     Sign Up
                   </NavLink>
