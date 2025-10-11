@@ -16,7 +16,13 @@ const app = express();
 const __dirname = path.resolve();
 
 // Middlewares
-app.use(cors());
+const corsOptions = {
+  origin: 'https://hh23.netlify.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
