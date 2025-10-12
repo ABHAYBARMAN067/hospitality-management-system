@@ -3,7 +3,7 @@ import axios from "axios";
 // Base URL dynamically set based on environment
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "https://hospitality-management-system-2-8utv.onrender.com/api" // Render backend URL
+    ? "" // PASTE  backend URL
     : "http://localhost:5000/api"; // Local development backend
 
 const api = axios.create({
