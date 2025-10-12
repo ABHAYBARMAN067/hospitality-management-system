@@ -207,9 +207,9 @@ hospitality-management-system/
 
 ## Contributors
 
-- **Astha** – Frontend Development  
-- **Abhay** – Backend Development  
-- **Anmol** – Database Creation
+- **Astha** 
+- **Abhay** 
+- **Anmol** 
 
 
 ## License
