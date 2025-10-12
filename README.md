@@ -2,6 +2,10 @@
 
 A full-stack web application for managing restaurants, bookings, menus, and user interactions in a hospitality setting.
 
+
+# SCREENSHOT
+![HospitalityHub Screenshot](assets/screenshots/image.png)
+
 ## Features
 
 - **User Authentication**: Register and login with JWT-based authentication.
