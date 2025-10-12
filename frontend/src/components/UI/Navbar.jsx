@@ -80,22 +80,13 @@ const Navbar = () => {
               )}
 
               {user && user.role === 'admin' && (
-                <>
-                  <NavLink
-                    to="/admin/my-restaurants"
-                    className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
-                  >
-                    My Restaurants
-                  </NavLink>
-                  <NavLink
-                    to="/admin/bookings"
-                    className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-                    style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
-                  >
-                    Bookings
-                  </NavLink>
-                </>
+                <NavLink
+                  to="/admin/dashboard"
+                  className="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                  style={({ isActive }) => isActive ? { borderColor: '#EF4F5F', color: 'black' } : { borderColor: 'transparent', color: 'black' }}
+                >
+                  My Restaurants
+                </NavLink>
               )}
             </div>
           </div>
@@ -251,34 +242,19 @@ const Navbar = () => {
               )}
 
               {user && user.role === 'admin' && (
-                <>
-                  <NavLink
-                    to="/admin/my-restaurants"
-                    onClick={() => setMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `${isActive
-                        ? 'dark:bg-gray-700 dark:text-white'
-                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                      } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
-                    }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
-                  >
-                    My Restaurants
-                  </NavLink>
-                  <NavLink
-                    to="/admin/bookings"
-                    onClick={() => setMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `${isActive
-                        ? 'dark:bg-gray-700 dark:text-white'
-                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                      } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
-                    }
-                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
-                  >
-                    Bookings
-                  </NavLink>
-                </>
+                <NavLink
+                  to="/admin/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `${isActive
+                      ? 'dark:bg-gray-700 dark:text-white'
+                      : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                    } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
+                  }
+                  style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
+                >
+                  My Restaurants
+                </NavLink>
               )}
 
               {user && (
