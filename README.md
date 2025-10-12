@@ -4,7 +4,8 @@ A full-stack web application for managing restaurants, bookings, menus, and user
 
 
 # SCREENSHOT
-![HospitalityHub Screenshot](assets/screenshots/image.png)
+![HospitalityHub Screenshot](frontend/src/assets/screenshot/image.png)
+
 
 ## Features
 
