@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 // Connect Database
 connectDB();
 
-// Routes
+// API Routes
 app.get('/api', (req, res) => {
   res.send('Restaurant backend API running');
 });
@@ -37,14 +37,14 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/orders', orderRoutes);
 
-// Serve React frontend (production)
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+// Serve React build (Vite → dist)
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 10000; // Render sets PORT automatically
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

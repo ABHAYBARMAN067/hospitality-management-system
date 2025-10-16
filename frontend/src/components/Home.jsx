@@ -20,7 +20,7 @@ const Home = () => {
     useEffect(() => {
         api.get('/restaurants')
             .then(res => {
-                setRestaurants(res.data);
+                setRestaurants(Array.isArray(res.data) ? res.data : []);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
