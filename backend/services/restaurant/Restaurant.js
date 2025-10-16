@@ -9,7 +9,6 @@ const restaurantSchema = new mongoose.Schema({
   imageUrl: String,
   rating: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
-
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

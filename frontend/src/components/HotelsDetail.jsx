@@ -114,7 +114,7 @@ const HotelsDetail = () => {
                         alt={restaurant.name}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-opacity-40 flex items-end">
+                    <div className="absolute inset-0 flex items-end">
 
                         <div className="p-8">
                             <h1 className="text-4xl font-bold text-white mb-2">{restaurant.name || 'Hotel Name'}</h1>
@@ -227,7 +227,7 @@ const HotelsDetail = () => {
                             {!user ? (
                                 <p className="text-gray-500">Please log in to make a reservation.</p>
                             ) : bookingSuccess ? (
-                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
                                     <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
                                         <h3 className="text-xl font-semibold text-[#4F191E] mb-4">Reservation Successful!</h3>
                                         <p className="text-gray-600 mb-6">

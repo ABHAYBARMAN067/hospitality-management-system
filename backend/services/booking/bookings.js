@@ -20,25 +20,6 @@ router.get('/', verifyToken, async (req, res) => {
 router.post('/', verifyToken, async (req, res) => {
   try {
     const { restaurantId, date, time, guests } = req.body;
-
-    // Validate required fields
-    if (!restaurantId || !date || !time || !guests) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    // Validate date (must be future date)
-    const bookingDate = new Date(date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (bookingDate < today) {
-      return res.status(400).json({ error: 'Booking date must be in the future' });
-    }
-
-    // Validate guests (1-8)
-    if (guests < 1 || guests > 8) {
-      return res.status(400).json({ error: 'Number of guests must be between 1 and 8' });
-    }
-
     const booking = await TableBooking.create({
       restaurantId,
       userId: req.user.id,
@@ -46,13 +27,9 @@ router.post('/', verifyToken, async (req, res) => {
       time,
       seats: guests,
     });
-
-    // Populate restaurant details
-    await booking.populate('restaurantId', 'name address');
-
-    res.status(201).json({ message: 'Booking created successfully', booking });
+    res.status(201).json({ message: 'Booking created', booking });
   } catch (err) {
-    console.error('Booking creation error:', err);
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });

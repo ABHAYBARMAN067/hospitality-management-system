@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TruckIcon, ClockIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -14,11 +14,14 @@ const AdminDashboard = () => {
     image: null,
   });
   const [bookings, setBookings] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [activeTab, setActiveTab] = useState('bookings');
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchMyRestaurant();
     fetchBookings();
+    fetchOrders();
   }, []);
 
   const fetchMyRestaurant = async () => {
@@ -40,6 +43,19 @@ const AdminDashboard = () => {
       setBookings(res.data);
     } catch (err) {
       console.error("Error fetching bookings:", err.response?.data || err.message);
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      if (restaurant) {
+        const res = await axios.get(`http://localhost:5000/api/orders/restaurant/${restaurant._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(res.data);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err.response?.data || err.message);
     }
   };
 
@@ -78,6 +94,54 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error("Error updating booking status:", err.response?.data || err.message);
       alert("❌ Failed to update booking");
+    }
+  };
+
+  const updateOrderStatus = async (orderId, status) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/orders/${orderId}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchOrders(); // Refresh orders after update
+    } catch (err) {
+      console.error("Error updating order status:", err.response?.data || err.message);
+      alert("❌ Failed to update order");
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'confirmed':
+        return <CheckCircleIcon className="h-5 w-5 text-green-500" />;
+      case 'preparing':
+        return <ClockIcon className="h-5 w-5 text-yellow-500" />;
+      case 'ready':
+        return <CheckCircleIcon className="h-5 w-5 text-blue-500" />;
+      case 'out_for_delivery':
+        return <TruckIcon className="h-5 w-5 text-orange-500" />;
+      case 'delivered':
+        return <CheckCircleIcon className="h-5 w-5 text-green-600" />;
+      default:
+        return <ClockIcon className="h-5 w-5 text-gray-400" />;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'preparing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'ready':
+        return 'bg-blue-100 text-blue-800';
+      case 'out_for_delivery':
+        return 'bg-orange-100 text-orange-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -262,77 +326,201 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* Table Bookings Section */}
-          <div className="mt-8 shadow sm:rounded-lg" style={{ backgroundColor: '#FFEDEF' }}>
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium" style={{ color: 'black' }}>
-                Table Bookings
-              </h3>
+          {/* Tabs for Bookings and Orders */}
+          <div className="mt-8">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                <button
+                  onClick={() => setActiveTab('bookings')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'bookings'
+                      ? 'border-[#EF4F5F] text-[#EF4F5F]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                >
+                  Table Bookings
+                </button>
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'orders'
+                      ? 'border-[#EF4F5F] text-[#EF4F5F]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                >
+                  Food Orders
+                </button>
+              </nav>
             </div>
-            <div className="border-t border-gray-200">
-              {bookings.length === 0 ? (
-                <div className="px-4 py-5 sm:p-6 text-center" style={{ color: 'black' }}>
-                  No bookings yet.
+
+            {/* Table Bookings Section */}
+            {activeTab === 'bookings' && (
+              <div className="mt-8 shadow sm:rounded-lg" style={{ backgroundColor: '#FFEDEF' }}>
+                <div className="px-4 py-5 sm:px-6">
+                  <h3 className="text-lg leading-6 font-medium" style={{ color: 'black' }}>
+                    Table Bookings
+                  </h3>
                 </div>
-              ) : (
-                <ul className="divide-y divide-gray-200">
-                  {bookings.map((b) => (
-                    <li key={b._id} className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="sm:flex sm:justify-between w-full">
-                          <div>
-                            <div className="flex items-center">
-                              <h4 className="text-lg font-medium" style={{ color: 'black' }}>{b.customerName}</h4>
-                              <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                ${b.status === 'Confirmed'
-                                  ? 'bg-green-100 text-green-800'
-                                  : b.status === 'Rejected'
-                                    ? 'bg-red-100 text-red-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                                }`}
-                              >
-                                {b.status}
-                              </span>
-                            </div>
-                            <div className="mt-2 flex items-center text-sm" style={{ color: 'black' }}>
-                              <span>Restaurant: {b.restaurantName}</span>
-                              <span className="mx-2">•</span>
-                              <span>Date: {b.date}</span>
-                              <span className="mx-2">•</span>
-                              <span>Guests: {b.guests}</span>
+                <div className="border-t border-gray-200">
+                  {bookings.length === 0 ? (
+                    <div className="px-4 py-5 sm:p-6 text-center" style={{ color: 'black' }}>
+                      No bookings yet.
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-gray-200">
+                      {bookings.map((b) => (
+                        <li key={b._id} className="px-4 py-4 sm:px-6">
+                          <div className="flex items-center justify-between">
+                            <div className="sm:flex sm:justify-between w-full">
+                              <div>
+                                <div className="flex items-center">
+                                  <h4 className="text-lg font-medium" style={{ color: 'black' }}>{b.customerName}</h4>
+                                  <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    ${b.status === 'Confirmed'
+                                      ? 'bg-green-100 text-green-800'
+                                      : b.status === 'Rejected'
+                                        ? 'bg-red-100 text-red-800'
+                                        : 'bg-yellow-100 text-yellow-800'
+                                    }`}
+                                  >
+                                    {b.status}
+                                  </span>
+                                </div>
+                                <div className="mt-2 flex items-center text-sm" style={{ color: 'black' }}>
+                                  <span>Restaurant: {b.restaurantName}</span>
+                                  <span className="mx-2">•</span>
+                                  <span>Date: {b.date}</span>
+                                  <span className="mx-2">•</span>
+                                  <span>Guests: {b.guests}</span>
+                                </div>
+                              </div>
+                              <div className="mt-4 sm:mt-0 sm:ml-6 flex items-center space-x-2">
+                                {b.status !== "Confirmed" && (
+                                  <button
+                                    onClick={() => updateBookingStatus(b._id, "Confirmed")}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Approve
+                                  </button>
+                                )}
+                                {b.status !== "Rejected" && (
+                                  <button
+                                    onClick={() => updateBookingStatus(b._id, "Rejected")}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Reject
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <div className="mt-4 sm:mt-0 sm:ml-6 flex items-center space-x-2">
-                            {b.status !== "Confirmed" && (
-                              <button
-                                onClick={() => updateBookingStatus(b._id, "Confirmed")}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
-                                style={{ backgroundColor: '#E03446' }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
-                              >
-                                Approve
-                              </button>
-                            )}
-                            {b.status !== "Rejected" && (
-                              <button
-                                onClick={() => updateBookingStatus(b._id, "Rejected")}
-                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
-                                style={{ backgroundColor: '#E03446' }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
-                              >
-                                Reject
-                              </button>
-                            )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Food Orders Section */}
+            {activeTab === 'orders' && (
+              <div className="mt-8 shadow sm:rounded-lg" style={{ backgroundColor: '#FFEDEF' }}>
+                <div className="px-4 py-5 sm:px-6">
+                  <h3 className="text-lg leading-6 font-medium" style={{ color: 'black' }}>
+                    Food Orders
+                  </h3>
+                </div>
+                <div className="border-t border-gray-200">
+                  {orders.length === 0 ? (
+                    <div className="px-4 py-5 sm:p-6 text-center" style={{ color: 'black' }}>
+                      No orders yet.
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-gray-200">
+                      {orders.map((order) => (
+                        <li key={order._id} className="px-4 py-4 sm:px-6">
+                          <div className="flex items-center justify-between">
+                            <div className="sm:flex sm:justify-between w-full">
+                              <div>
+                                <div className="flex items-center">
+                                  <h4 className="text-lg font-medium" style={{ color: 'black' }}>
+                                    Order #{order._id.slice(-6)}
+                                  </h4>
+                                  <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                                    {getStatusIcon(order.status)}
+                                    <span className="ml-1 capitalize">{order.status.replace('_', ' ')}</span>
+                                  </span>
+                                </div>
+                                <div className="mt-2 flex items-center text-sm" style={{ color: 'black' }}>
+                                  <span>Customer: {order.userId?.name || 'Unknown'}</span>
+                                  <span className="mx-2">•</span>
+                                  <span>Items: {order.items?.length || 0}</span>
+                                  <span className="mx-2">•</span>
+                                  <span>Total: ₹{order.totalAmount}</span>
+                                </div>
+                                <div className="mt-1 text-sm" style={{ color: 'black' }}>
+                                  <span>Address: {order.deliveryAddress}</span>
+                                </div>
+                              </div>
+                              <div className="mt-4 sm:mt-0 sm:ml-6 flex items-center space-x-2">
+                                {order.status === 'confirmed' && (
+                                  <button
+                                    onClick={() => updateOrderStatus(order._id, 'preparing')}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Start Preparing
+                                  </button>
+                                )}
+                                {order.status === 'preparing' && (
+                                  <button
+                                    onClick={() => updateOrderStatus(order._id, 'ready')}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Mark Ready
+                                  </button>
+                                )}
+                                {order.status === 'ready' && (
+                                  <button
+                                    onClick={() => updateOrderStatus(order._id, 'out_for_delivery')}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Out for Delivery
+                                  </button>
+                                )}
+                                {order.status === 'out_for_delivery' && (
+                                  <button
+                                    onClick={() => updateOrderStatus(order._id, 'delivered')}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#EF4F5F]"
+                                    style={{ backgroundColor: '#E03446' }}
+                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#BF238B'}
+                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#E03446'}
+                                  >
+                                    Mark Delivered
+                                  </button>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

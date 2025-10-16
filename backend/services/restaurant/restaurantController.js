@@ -27,25 +27,4 @@ export const getRestaurantById = async (req, res) => {
     }
 };
 
-// Get restaurant menu items
-export const getRestaurantMenu = async (req, res) => {
-    try {
-        const restaurantId = req.params.id;
-
-        // Verify restaurant exists
-        const restaurant = await Restaurant.findById(restaurantId);
-        if (!restaurant) {
-            return res.status(404).json({ error: 'Restaurant not found' });
-        }
-
-        // Fetch all menu items for this restaurant
-        const menuItems = await MenuItem.find({ restaurantId }).sort({ name: 1 });
-
-        res.json(menuItems);
-    } catch (err) {
-        console.error('Get restaurant menu error:', err);
-        res.status(500).json({ error: 'Server error' });
-    }
-};
-
 // Add more CRUD functions as needed

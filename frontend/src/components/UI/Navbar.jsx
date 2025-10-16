@@ -3,13 +3,18 @@ import { AuthContext } from '../../context/AuthContext';
 import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, loading } = useContext(AuthContext);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    setShowProfileDropdown(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setShowProfileDropdown(false);
+      window.location.href = '/login'; // Redirect to login after logout
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
   };
 
   const toggleDropdown = () => {
@@ -92,7 +97,9 @@ const Navbar = () => {
           </div>
 
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            {user ? (
+            {loading ? (
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03446]"></div>
+            ) : user ? (
               <div className="relative">
                 <button
                   onClick={toggleDropdown}
@@ -259,6 +266,19 @@ const Navbar = () => {
 
               {user && (
                 <>
+                  <NavLink
+                    to="/orders"
+                    onClick={() => setMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `${isActive
+                        ? 'dark:bg-gray-700 dark:text-white'
+                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                      } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`
+                    }
+                    style={({ isActive }) => isActive ? { backgroundColor: '#FFF5F6', borderColor: '#EF4F5F', color: 'black' } : { color: 'black' }}
+                  >
+                    My Orders
+                  </NavLink>
                   <Link
                     to="/profile"
                     onClick={() => setMenuOpen(false)}
@@ -267,16 +287,21 @@ const Navbar = () => {
                   >
                     Profile
                   </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setMenuOpen(false);
-                    }}
-                    className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-base font-medium"
-                    style={{ color: 'black' }}
-                  >
-                    Logout
-                  </button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await logout();
+                          setMenuOpen(false);
+                          window.location.href = '/login'; // Redirect to login after logout
+                        } catch (err) {
+                          console.error('Logout failed:', err);
+                        }
+                      }}
+                      className="block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 text-base font-medium"
+                      style={{ color: 'black' }}
+                    >
+                      Logout
+                    </button>
                 </>
               )}
 

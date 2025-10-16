@@ -8,6 +8,7 @@ import menuRoutes from './routes/menu.js';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import reviewRoutes from './routes/reviews.js';
+import orderRoutes from './routes/orders.js';
 import path from 'path';
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Serve React frontend (production)
 app.use(express.static(path.join(__dirname, '../frontend/build')));

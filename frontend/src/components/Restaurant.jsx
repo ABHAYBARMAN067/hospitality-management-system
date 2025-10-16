@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { StarIcon, MapPinIcon, PhoneIcon, EnvelopeIcon, ClockIcon } from '@heroicons/react/24/solid';
 import Navbar from './UI/Navbar';
 import LoadingSpinner from './UI/LoadingSpinner';
 import api from '../api/api';
 import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Restaurant = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const [restaurant, setRestaurant] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,17 +20,26 @@ const Restaurant = () => {
     const [bookingLoading, setBookingLoading] = useState(false);
     const [bookingError, setBookingError] = useState('');
     const [bookingSuccess, setBookingSuccess] = useState(null); // will hold booking object
+    const [menuItems, setMenuItems] = useState([]);
+    const [cart, setCart] = useState([]);
 
     useEffect(() => {
-        api.get(`/restaurants/${id}`)
-            .then(res => {
-                setRestaurant(res.data);
-                setLoading(false);
-            })
-            .catch(err => {
+        const fetchRestaurantData = async () => {
+            try {
+                const [restaurantRes, menuRes] = await Promise.all([
+                    api.get(`/restaurants/${id}`),
+                    api.get(`/restaurants/${id}/menu`)
+                ]);
+                setRestaurant(restaurantRes.data);
+                setMenuItems(menuRes.data);
+            } catch (err) {
                 setRestaurantError(err.response?.data?.error || 'Failed to load restaurant');
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchRestaurantData();
     }, [id]);
 
     const handleSubmit = async (e) => {
@@ -61,12 +72,16 @@ const Restaurant = () => {
                 guests: guestCount,
             });
             setBookingSuccess(res.data.booking);
+            toast.success('Table booked successfully!');
         } catch (error) {
             setBookingError(error.response?.data?.error || 'Failed to create booking');
+            toast.error(error.response?.data?.error || 'Failed to create booking');
         } finally {
             setBookingLoading(false);
         }
     };
+
+
 
     if (loading) {
         return (
@@ -102,18 +117,20 @@ const Restaurant = () => {
         <div className="min-h-screen bg-primary-50">
             <Navbar />
 
+
+
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 {/* Hero Section */}
                 <div className="relative h-96 rounded-xl overflow-hidden">
                     <img
-                        src={restaurant.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'}
+                        src={restaurant.imageUrl || ''}
                         alt={restaurant.name}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end">
-                        <div className="p-8">
+                    <div className="absolute inset-0 flex items-end">
+                        <div className="p-8 rounded-lg">
                             <h1 className="text-4xl font-bold text-white mb-2">{restaurant.name}</h1>
-                            <div className="flex items-center text-white space-x-4">
+                            <div className="flex items-center text-white space-x-4 mb-4">
                                 {restaurant.rating && (
                                     <div className="flex items-center">
                                         <StarIcon className="h-5 w-5 text-yellow-400" />
@@ -126,6 +143,7 @@ const Restaurant = () => {
                                     </span>
                                 )}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -160,40 +178,139 @@ const Restaurant = () => {
                             </div>
                         </div>
 
-                        {/* Menu Preview Section */}
+                        {/* Menu Section */}
                         <div className="bg-primary-100 shadow rounded-lg p-6">
-                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Popular Dishes</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {/* Example menu items - replace with actual data */}
-                                {[1, 2, 3, 4].map((item) => (
-                                    <div key={item} className="flex items-center space-x-4 p-4 rounded-lg bg-primary-50">
-                                        <div className="h-16 w-16 rounded-lg overflow-hidden">
-                                            <img
-                                                src={`https://source.unsplash.com/featured/100x100?food-${item}`}
-                                                alt="Dish"
-                                                className="h-full w-full object-cover"
-                                            />
+                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Menu</h2>
+                            {menuItems.length === 0 ? (
+                                <p className="text-primary-500">Menu items will be loaded here...</p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {menuItems.map((item) => (
+                                        <div key={item._id} className="flex items-center justify-between p-4 rounded-lg bg-primary-50 border border-primary-200">
+                                            <div className="flex items-center space-x-4 flex-1">
+                                                <div className="h-20 w-20 rounded-lg overflow-hidden flex-shrink-0">
+                                                    <img
+                                                        src={item.image || `${item._id}`}
+                                                        alt={item.name}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg font-semibold text-primary-900">{item.name}</h3>
+                                                    <p className="text-sm text-primary-600 font-medium">₹{item.price}</p>
+                                                    {item.description && (
+                                                        <p className="text-sm text-primary-500 mt-1">{item.description}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-end space-y-2">
+                                                <button
+                                                    onClick={() => {
+                                                        const existingItem = cart.find(cartItem => cartItem.menuItemId === item._id);
+                                                        if (existingItem) {
+                                                            setCart(cart.map(cartItem =>
+                                                                cartItem.menuItemId === item._id
+                                                                    ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                                                                    : cartItem
+                                                            ));
+                                                        } else {
+                                                            setCart([...cart, {
+                                                                menuItemId: item._id,
+                                                                name: item.name,
+                                                                price: item.price,
+                                                                quantity: 1
+                                                            }]);
+                                                        }
+                                                        toast.success('Item added to cart');
+                                                    }}
+                                                    className="px-6 py-2 bg-[#E03446] text-white rounded-lg hover:bg-[#BF238B] transition-colors font-medium"
+                                                >
+                                                    Add to Cart
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-primary-900">Dish Name</h3>
-                                            <p className="text-sm text-primary-500">₹299</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Booking Section */}
                     <div className="lg:col-span-1">
                         <div className="bg-primary-100 shadow rounded-lg p-6 sticky top-8">
-                            <h2 className="text-xl font-semibold text-primary-900 mb-4">Make a Reservation</h2>
+                            <div className="flex space-x-4 mb-4">
+                                <button
+                                    onClick={() => navigate('/my-table')}
+                                    className="px-6 py-2 bg-[#E03446] text-white rounded-lg hover:bg-[#BF238B] transition-colors"
+                                >
+                                    Book Table
+                                </button>
+                            </div>
+
+                            {/* Cart Section */}
+                            <div className="mt-6">
+                                <h3 className="text-lg font-semibold text-primary-900 mb-4">Your Cart</h3>
+                                {cart.length === 0 ? (
+                                    <p className="text-primary-500">Your cart is empty</p>
+                                ) : (
+                                    <>
+                                        <div className="space-y-2 mb-4">
+                                            {cart.map((cartItem, index) => (
+                                                <div key={index} className="flex justify-between items-center">
+                                                    <div>
+                                                        <p className="text-sm font-medium text-primary-900">{cartItem.name}</p>
+                                                        <p className="text-xs text-primary-500">₹{cartItem.price} x {cartItem.quantity}</p>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2">
+                                                        <button
+                                                            onClick={() => setCart(cart.map(item =>
+                                                                item.menuItemId === cartItem.menuItemId
+                                                                    ? { ...item, quantity: Math.max(1, item.quantity - 1) }
+                                                                    : item
+                                                            ))}
+                                                            className="px-2 py-1 bg-[#E03446] text-white rounded text-xs"
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className="text-sm">{cartItem.quantity}</span>
+                                                        <button
+                                                            onClick={() => setCart(cart.map(item =>
+                                                                item.menuItemId === cartItem.menuItemId
+                                                                    ? { ...item, quantity: item.quantity + 1 }
+                                                                    : item
+                                                            ))}
+                                                            className="px-2 py-1 bg-[#E03446] text-white rounded text-xs"
+                                                        >
+                                                            +
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setCart(cart.filter(item => item.menuItemId !== cartItem.menuItemId))}
+                                                            className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="border-t pt-4">
+                                            <p className="text-lg font-semibold text-primary-900">
+                                                Total: ₹{cart.reduce((total, item) => total + item.price * item.quantity, 0)}
+                                            </p>
+                                            <button
+                                                onClick={() => navigate('/cart', { state: { cart, restaurantId: id, restaurantName: restaurant.name } })}
+                                                className="mt-4 w-full px-4 py-2 bg-[#E03446] text-white rounded-lg hover:bg-[#BF238B] transition-colors"
+                                            >
+                                                Proceed to Checkout
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
                             {!user ? (
                                 <div className="text-center">
-                                    <p className="text-primary-700 mb-4">Please log in to make a reservation.</p>
-                                    <a href="/login" className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">
-                                        Login
-                                    </a>
+                                    {/* No login/signup buttons here */}
                                 </div>
                             ) : (
                                 <>
@@ -247,38 +364,40 @@ const Restaurant = () => {
                                         <button
                                             type="submit"
                                             disabled={bookingLoading}
-                                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E03446] hover:bg-[#BF238B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#E03446] disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {bookingLoading ? 'Reserving...' : 'Reserve Table'}
                                         </button>
                                     </form>
-                                    </>
-                                )}
-                            </div>
+                                </>
+                            )}
                         </div>
+                    </div>
 
-                        {/* Success Modal */}
-                        {bookingSuccess && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                                    <div className="text-center">
-                                        <h2 className="text-2xl font-bold text-primary-900 mb-4">Reservation Successful!</h2>
-                                        <p className="text-primary-700 mb-4">Thank you for your reservation. We look forward to serving you!</p>
-                                        <p className="text-sm text-primary-500 mb-2">Booking ID: {bookingSuccess._id}</p>
-                                        <p className="text-sm text-primary-500 mb-6">Date: {selectedDate} | Time: {selectedTime} | Guests: {guestCount}</p>
-                                        <button
-                                            onClick={() => setBookingSuccess(null)}
-                                            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
+                    {/* Success Modal */}
+                    {bookingSuccess && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-bold text-primary-900 mb-4">Reservation Successful!</h2>
+                                    <p className="text-primary-700 mb-4">Thank you for your reservation. We look forward to serving you!</p>
+                                    <p className="text-sm text-primary-500 mb-2">Booking ID: {bookingSuccess._id}</p>
+                                    <p className="text-sm text-primary-500 mb-6">Date: {selectedDate} | Time: {selectedTime} | Guests: {guestCount}</p>
+                                    <button
+                                        onClick={() => setBookingSuccess(null)}
+                                        className="px-4 py-2 bg-[#E03446] text-white rounded-md hover:bg-[#BF238B]"
+                                    >
+                                        Close
+                                    </button>
                                 </div>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
+                </div>
             </main>
-        </div>
+
+
+        </div >
     );
 };
 
