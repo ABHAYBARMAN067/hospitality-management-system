@@ -50,7 +50,7 @@ A full-stack web application for managing restaurants, bookings, menus, orders, 
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/ABHAYBARMAN067/hospitality-management-system>
    cd hospitality-management-system
    ```
 
