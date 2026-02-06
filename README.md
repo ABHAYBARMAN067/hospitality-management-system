@@ -284,13 +284,10 @@ hospitality-management-system/
 ### Admin
 - Additional admin-specific endpoints for managing restaurants, bookings, and orders.
 
-## Contributors
 
-- **Astha** 
-- **Abhay** 
-- **Anmol** 
 
 
 ## License
 
 All rights reserved. No one can use, copy, or distribute this project without permission.
+
